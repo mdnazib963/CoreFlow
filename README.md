@@ -17,7 +17,7 @@ Target spec was *">50 tok/s on one core."* The 12.6M variant hits 346 tok/s (6.9
 | Token-level parity vs PyTorch | **99.41%** match (first-token 98.7%) |
 | Isolated cache-residency benefit | **1.15×** (clflush cold vs warm, position-matched) |
 
-All numbers are reproducible from the JSON records in [`phase0/`](phase0/) — every claim below links to its source file.
+All numbers are reproducible from the JSON records in [`phase0/`](phase0/) — every claim below links to its source file. Model weights are also mirrored on Hugging Face: [nazib61/coreflow-1.9m](https://huggingface.co/nazib61/coreflow-1.9m).
 
 ---
 
