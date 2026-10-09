@@ -9,6 +9,7 @@ __pycache__/
 *.ilk
 *.bin
 *.i8
+!phase0/model_p3.i8
 *.cf
 *.pt
 *.onnx
