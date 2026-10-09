@@ -2,7 +2,7 @@
 
 **A 1.9 MB int8 language model that decodes 3,400+ tokens/second on a single CPU core — trained from scratch in pure PyTorch, served by a dependency-free C11 runtime. No Hugging Face wrappers, no llama.cpp, no GPU.**
 
-Target spec was *">50 tok/s on one core."* Measured: **3,405 tok/s sustained, single core** — 68× the goal, with 99.4% token-level parity against the PyTorch reference.
+Target spec was *">50 tok/s on one core."* The 12.6M variant hits 346 tok/s (6.9× the goal) despite being 333% of L3; the cache-fit 1.9M model — sized so its weights live in L3 — does **3,405 tok/s sustained, single core** (68×), with 99.4% token-level parity against the PyTorch reference.
 
 | Metric | Result |
 |---|---|
@@ -33,10 +33,10 @@ All numbers are reproducible from the JSON records in [`phase0/`](phase0/) — e
  "p99_ms":0.704,"prefill_tok_s":6126}
 
 > phase0\phase0.exe phase0\model_p3.i8 stream 2.0
-{"mode":"stream","sec":2.001,"passes":166,"gb_s":11.14}
+{"mode":"stream","sec":2.003,"passes":247,"gb_s":16.55}
 ```
 
-Every forward pass reads ~1.97 MB of weights; at 3,400 tok/s that is a **16.4 GB/s weight stream served entirely out of L3** — the DRAM stays out of the decode loop (measured box DRAM: 14.8–17.7 GB/s, i.e. slower than the model's own cache traffic, which is exactly why residency is the whole game).
+Every forward pass streams the model's full ~1.97 MB working set, so 3,405 tok/s means **~6.7 GB/s of weight reads — served out of L3, not DRAM**. The proof is in the eviction tests: force a concurrent process to pollute L3 (`evict_read` mode in the same binary) and the identical model drops to 1,681 tok/s — a 2.03× penalty you only pay when the cache stops working (`gates_p5.json`). The `stream` command measures your box's raw DRAM bandwidth instead (128 MB sequential scan — 16.4 GB/s on the reference machine), so you can compare the two directly.
 
 ---
 
@@ -54,7 +54,8 @@ phase0\phase0.exe phase0\model_p3.i8 info
 :: sustained decode benchmark (tokens/sec on your machine)
 phase0\phase0.exe phase0\model_p3.i8 bench data\val.bin 15.0 65
 
-:: weight-stream bandwidth probe (should be >10 GB/s from cache)
+:: raw DRAM bandwidth probe (128 MB scan — compare against the 6.7 GB/s
+:: of weight reads the model actually needs from cache)
 phase0\phase0.exe phase0\model_p3.i8 stream 2.0
 ```
 
