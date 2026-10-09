@@ -4,7 +4,7 @@
 
 Target spec was *">50 tok/s on one core."* The 12.6M variant hits 346 tok/s (6.9× the goal) despite being 333% of L3; the cache-fit 1.9M model — sized so its weights live in L3 — does **3,405 tok/s sustained, single core** (68×), with 99.4% token-level parity against the PyTorch reference.
 
-![terminal demo](docs/terminal_demo.png)
+![demo](docs/demo.gif)
 
 | Metric | Result |
 |---|---|
