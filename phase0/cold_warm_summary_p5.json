@@ -1,0 +1,218 @@
+{
+  "phase": 5,
+  "date": "2026-10-09",
+  "protocol": "N=1 single thread (no MT interference); clflush model weight buffer (m.size, 64B lines) + sfence before every cold forward, flush excluded from timed region; identical 900-token reset cadence + prompt in both arms (position-matched); per-rep rdtsc + batch timing agree; 4 runs",
+  "runs": [
+    {
+      "warm_us": {
+        "median": 223,
+        "mean": 232.2,
+        "p99": 482,
+        "batch": 232.7
+      },
+      "cold_us": {
+        "median": 267,
+        "mean": 269.5,
+        "p99": 471,
+        "batch": 270.0
+      },
+      "median_ratio": 1.197,
+      "batch_ratio": 1.16,
+      "warm_ctr_us": {
+        "gemv": 123.5,
+        "act": 4.2,
+        "scor": 41.0,
+        "soft": 13.5,
+        "val": 39.1,
+        "head": 6.9,
+        "rope": 1.1
+      },
+      "cold_ctr_us": {
+        "gemv": 163.3,
+        "act": 4.2,
+        "scor": 39.2,
+        "soft": 12.9,
+        "val": 37.8,
+        "head": 6.9,
+        "rope": 1.1
+      },
+      "flush_us": 31.4,
+      "source": "console (run1)"
+    },
+    {
+      "mode": "cold",
+      "N": 1,
+      "prompt": 65,
+      "warm_reps": 5000,
+      "cold_reps": 1000,
+      "flush_scope": "model_weights",
+      "reset_cadence": 900,
+      "warm_us": {
+        "median": 215,
+        "mean": 239.6,
+        "p99": 519,
+        "batch": 240.1
+      },
+      "cold_us": {
+        "median": 242,
+        "mean": 251.0,
+        "p99": 479,
+        "batch": 251.5
+      },
+      "median_delta_us": 27,
+      "median_ratio": 1.126,
+      "batch_ratio": 1.047,
+      "warm_tok_s": 4173.2,
+      "cold_tok_s": 3984.0,
+      "warm_ctr_us": {
+        "gemv": 127.7,
+        "act": 4.0,
+        "scor": 46.1,
+        "soft": 13.0,
+        "val": 38.3,
+        "head": 6.7,
+        "rope": 1.1
+      },
+      "cold_ctr_us": {
+        "gemv": 152.5,
+        "act": 4.0,
+        "scor": 36.8,
+        "soft": 12.0,
+        "val": 34.8,
+        "head": 6.4,
+        "rope": 1.0
+      },
+      "flush_bytes": 1965250,
+      "flush_us": 28.5,
+      "flush_lines": 30707,
+      "tsc_ghz": 4177.061,
+      "cores": [
+        0
+      ]
+    },
+    {
+      "mode": "cold",
+      "N": 1,
+      "prompt": 65,
+      "warm_reps": 5000,
+      "cold_reps": 1000,
+      "flush_scope": "model_weights",
+      "reset_cadence": 900,
+      "warm_us": {
+        "median": 218,
+        "mean": 224.4,
+        "p99": 403,
+        "batch": 224.9
+      },
+      "cold_us": {
+        "median": 255,
+        "mean": 259.1,
+        "p99": 452,
+        "batch": 259.6
+      },
+      "median_delta_us": 37,
+      "median_ratio": 1.17,
+      "batch_ratio": 1.154,
+      "warm_tok_s": 4456.7,
+      "cold_tok_s": 3860.2,
+      "warm_ctr_us": {
+        "gemv": 119.1,
+        "act": 4.1,
+        "scor": 39.9,
+        "soft": 13.3,
+        "val": 37.6,
+        "head": 6.8,
+        "rope": 1.0
+      },
+      "cold_ctr_us": {
+        "gemv": 157.9,
+        "act": 4.3,
+        "scor": 37.9,
+        "soft": 12.5,
+        "val": 35.7,
+        "head": 6.8,
+        "rope": 1.0
+      },
+      "flush_bytes": 1965250,
+      "flush_us": 33.0,
+      "flush_lines": 30707,
+      "tsc_ghz": 4017.195,
+      "cores": [
+        0
+      ]
+    },
+    {
+      "mode": "cold",
+      "N": 1,
+      "prompt": 65,
+      "warm_reps": 5000,
+      "cold_reps": 1000,
+      "flush_scope": "model_weights",
+      "reset_cadence": 900,
+      "warm_us": {
+        "median": 230,
+        "mean": 234.7,
+        "p99": 427,
+        "batch": 235.2
+      },
+      "cold_us": {
+        "median": 253,
+        "mean": 257.9,
+        "p99": 469,
+        "batch": 258.4
+      },
+      "median_delta_us": 23,
+      "median_ratio": 1.1,
+      "batch_ratio": 1.099,
+      "warm_tok_s": 4260.9,
+      "cold_tok_s": 3877.3,
+      "warm_ctr_us": {
+        "gemv": 124.6,
+        "act": 4.3,
+        "scor": 41.5,
+        "soft": 14.0,
+        "val": 39.4,
+        "head": 7.0,
+        "rope": 1.1
+      },
+      "cold_ctr_us": {
+        "gemv": 156.1,
+        "act": 4.1,
+        "scor": 37.8,
+        "soft": 12.6,
+        "val": 35.9,
+        "head": 6.6,
+        "rope": 1.0
+      },
+      "flush_bytes": 1965250,
+      "flush_us": 29.7,
+      "flush_lines": 30707,
+      "tsc_ghz": 4021.798,
+      "cores": [
+        0
+      ]
+    }
+  ],
+  "aggregate": {
+    "warm_median_us": 220.5,
+    "cold_median_us": 254.0,
+    "median_ratio_min": 1.1,
+    "median_ratio_max": 1.197,
+    "median_ratio_med": 1.148,
+    "batch_ratio_med": 1.1265,
+    "batch_ratio_range": [
+      1.047,
+      1.16
+    ],
+    "exposed_unoverlapped_gemv_delta_us_med": 35.150000000000006,
+    "warm_tok_s_est": 4274,
+    "cold_tok_s_est": 3861,
+    "naive_bytes_div_exposed_us_gb_s": 55.9,
+    "measured_dram_stream_gb_s_on_this_box": [
+      14.84,
+      16.4,
+      17.7
+    ],
+    "bw_note": "naive_bytes_div_exposed_us_gb_s is NOT a bandwidth measurement: the 1.87 MB refill streams largely overlapped under GEMV compute (gemv consumes ~15 GB/s, at/below the measured 14.84-17.7 GB/s DRAM stream); the measured quantity is the exposed, unoverlapped residual penalty only"
+  }
+}

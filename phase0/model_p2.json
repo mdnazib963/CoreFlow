@@ -1,0 +1,16 @@
+{
+  "vocab": 4096,
+  "d": 144,
+  "dff": 448,
+  "nconv": 4,
+  "natt": 2,
+  "heads": 8,
+  "kv": 1,
+  "ctx": 1024,
+  "softcap": 30.0,
+  "k": 4,
+  "params": 2042352,
+  "bytes": 2072482,
+  "step": 17610,
+  "ckpt": "run/p2_best.pt"
+}

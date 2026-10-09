@@ -1,0 +1,101 @@
+{
+  "model": "phase0/model.i8",
+  "ckpt": "run/p0_best.pt",
+  "ts": "2026-10-08 10:58:06",
+  "info": {
+    "file_bytes": 1227330,
+    "d": 128,
+    "dff": 192,
+    "nconv": 4,
+    "natt": 2,
+    "heads": 4,
+    "kv": 1,
+    "ctx": 1024,
+    "vocab": 4096,
+    "softcap": 30.0,
+    "working_set": 1538370,
+    "l3": 4096,
+    "ws_pct_l3": 36.7,
+    "fit_half_l3": true
+  },
+  "stream": {
+    "mode": "stream",
+    "sec": 2.004,
+    "passes": 249,
+    "gb_s": 16.68
+  },
+  "clean": {
+    "mode": "clean",
+    "tokens": 19859,
+    "sec": 10.0,
+    "tok_s": 1985.84,
+    "mean_ms": 0.4848,
+    "p50_ms": 0.469,
+    "p99_ms": 1.012,
+    "max_ms": 11.398,
+    "cycles": 21,
+    "prefill_tok_s": 3788
+  },
+  "evict_write": {
+    "mode": "evict_write",
+    "tokens": 6605,
+    "sec": 10.015,
+    "tok_s": 659.54,
+    "mean_ms": 1.458,
+    "p50_ms": 1.364,
+    "p99_ms": 3.424,
+    "max_ms": 70.64,
+    "cycles": 7,
+    "prefill_tok_s": 1252
+  },
+  "evict_read": {
+    "mode": "evict_read",
+    "tokens": 11667,
+    "sec": 10.021,
+    "tok_s": 1164.25,
+    "mean_ms": 0.8244,
+    "p50_ms": 0.77,
+    "p99_ms": 1.976,
+    "max_ms": 23.729,
+    "cycles": 13,
+    "prefill_tok_s": 2204
+  },
+  "c_ppl": {
+    "windows": 4,
+    "seq": 256,
+    "ntok": 1020,
+    "nll": 3.771311,
+    "ppl": 43.436988
+  },
+  "torch_ppl": {
+    "windows": 4,
+    "seq": 256,
+    "ntok": 1020,
+    "nll": 3.771110564587163,
+    "ppl": 43.42826843261719,
+    "step": 5870
+  },
+  "verdict": {
+    "gate1_speed": {
+      "pass": true,
+      "tok_s": 1985.84,
+      "p99_ms": 1.012,
+      "sec": 10.0
+    },
+    "gate2_cache": {
+      "pass": true,
+      "ws_bytes": 1538370,
+      "ws_pct_l3": 36.7,
+      "evict_slowdown": 1.7056817693794288,
+      "dram_gb_s": 16.68
+    },
+    "gate3_parity": {
+      "pass": true,
+      "c_ppl": 43.436988,
+      "torch_ppl": 43.42826843261719,
+      "delta": 0.008719567382811988,
+      "rel": 0.00020078091292866467
+    },
+    "all_pass": true
+  }
+}

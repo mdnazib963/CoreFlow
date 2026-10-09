@@ -1,0 +1,102 @@
+[
+ {
+  "level": "easy",
+  "task": 0,
+  "prompt": "[MEM]\n- a voshm63 is a vorpv9787 (src: user)\n- vorpv9787s eat kuvrnen4179 (src: user)\n[/MEM]\nQ: What does a voshm63 eat?\nA: ",
+  "gold": "kuvrnen4179",
+  "got": "kuvrnen4179",
+  "pref": 7,
+  "goldlen": 7,
+  "first_ok": true
+ },
+ {
+  "level": "easy",
+  "task": 325,
+  "prompt": "[MEM]\n- a wrothf8138 is a tazikx7707 (src: user)\n- tazikx7707s eat fumwuih2049 (src: user)\n[/MEM]\nQ: What does a wrothf8138 eat?\nA: ",
+  "gold": "fumwuih2049",
+  "got": "fumwuih2049",
+  "pref": 8,
+  "goldlen": 8,
+  "first_ok": true
+ },
+ {
+  "level": "easy",
+  "task": 646,
+  "prompt": "[MEM]\n- a mirgc9204 is a yelml4769 (src: user)\n- yelml4769s eat qtxrz5305 (src: user)\n[/MEM]\nQ: What does a mirgc9204 eat?\nA: ",
+  "gold": "qtxrz5305",
+  "got": "qtxrz5305",
+  "pref": 7,
+  "goldlen": 7,
+  "first_ok": true
+ },
+ {
+  "level": "easy",
+  "task": 998,
+  "prompt": "[MEM]\n- a brellq2668 is a brevof76 (src: user)\n- brevof76s eat cokyr9366 (src: user)\n[/MEM]\nQ: What does a brellq2668 eat?\nA: ",
+  "gold": "cokyr9366",
+  "got": "cokyr9366",
+  "pref": 6,
+  "goldlen": 6,
+  "first_ok": true
+ },
+ {
+  "level": "medium",
+  "task": 4,
+  "prompt": "[MEM]\n- a galdra3066 is a vorpt9046 (src: user)\n- vorpt9046s eat acysxy9350 (src: user)\n[/MEM]\nQ: What does a galdra3066 eat?\nA: ",
+  "gold": "acysxy9350",
+  "got": "acysxy2157",
+  "pref": 5,
+  "goldlen": 6,
+  "first_ok": true
+ },
+ {
+  "level": "medium",
+  "task": 519,
+  "prompt": "[MEM]\n- a brellq6433 is a gnashp3006 (src: user)\n- gnashp3006s eat yalbxbl3836 (src: user)\n[/MEM]\nQ: What does a brellq6433 eat?\nA: ",
+  "gold": "yalbxbl3836",
+  "got": "yalbxbl6433",
+  "pref": 5,
+  "goldlen": 7,
+  "first_ok": true
+ },
+ {
+  "level": "medium",
+  "task": 999,
+  "prompt": "[MEM]\n- a galdrj2580 is a tazikn1786 (src: user)\n- tazikn1786s eat wynuox542 (src: user)\n[/MEM]\nQ: What does a galdrj2580 eat?\nA: ",
+  "gold": "wynuox542",
+  "got": "wynuox5010",
+  "pref": 5,
+  "goldlen": 7,
+  "first_ok": true
+ },
+ {
+  "level": "hard",
+  "task": 54,
+  "prompt": "[MEM]\n- a thulv5827 is a brevoy2656 (src: user)\n- brevoy2656s eat pinwm3429 (src: user)\n[/MEM]\nQ: What does a thulv5827 eat?\nA: ",
+  "gold": "pinwm3429",
+  "got": "knwm3429",
+  "pref": 0,
+  "goldlen": 5,
+  "first_ok": false
+ },
+ {
+  "level": "hard",
+  "task": 293,
+  "prompt": "[MEM]\n- a snellv9735 is a shumnn157 (src: user)\n- shumnn157s eat romcd3197 (src: user)\n[/MEM]\nQ: What does a snellv9735 eat?\nA: ",
+  "gold": "romcd3197",
+  "got": "902",
+  "pref": 0,
+  "goldlen": 5,
+  "first_ok": false
+ },
+ {
+  "level": "hard",
+  "task": 893,
+  "prompt": "[MEM]\n- a snelld9543 is a shumnv6993 (src: user)\n- shumnv6993s eat crohanc3471 (src: user)\n[/MEM]\nQ: What does a snelld9543 eat?\nA: ",
+  "gold": "crohanc3471",
+  "got": "rihutim9543",
+  "pref": 0,
+  "goldlen": 5,
+  "first_ok": false
+ }
+]

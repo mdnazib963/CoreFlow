@@ -1,0 +1,165 @@
+{
+  "phase": 5,
+  "date": "2026-10-09",
+  "protocol": "60 s sustained, stage_rt bench, K=1, same binary (r+1 prefetch), ascending N, val.bin; accepted run = passes contamination rule (mean/p50 <= 1.10 or max <= 100 ms); rejected runs re-run once",
+  "accepted": {
+    "N1": {
+      "tok_s": 3444.3,
+      "tokens": 206657,
+      "speedup_vs_n1": 1.0,
+      "efficiency": 1.0,
+      "p50_ms": 0.258,
+      "mean_ms": 0.2782,
+      "p99_ms": 0.648,
+      "max_ms": 450.009,
+      "prefill_tok": 14040,
+      "floor_x": 68.9,
+      "budget_headroom_x": 30.9,
+      "p50_pace_tok_s": 3876.0,
+      "us_tok": {
+        "gemv": 134.63,
+        "act": 5.35,
+        "attn": 107.89,
+        "head": 7.1,
+        "rope": 1.16,
+        "scor": 46.92,
+        "soft": 15.28,
+        "val": 43.94,
+        "sum": 254.96,
+        "wall": 278.23,
+        "tsc_ghz": 4012.784
+      }
+    },
+    "N2": {
+      "tok_s": 3660.7,
+      "tokens": 219646,
+      "speedup_vs_n1": 1.063,
+      "efficiency": 0.531,
+      "p50_ms": 0.256,
+      "mean_ms": 0.2621,
+      "p99_ms": 0.499,
+      "max_ms": 6.15,
+      "prefill_tok": 14885,
+      "floor_x": 73.2,
+      "budget_headroom_x": 40.1,
+      "p50_pace_tok_s": 3906.0,
+      "us_tok": {
+        "gemv": 129.33,
+        "act": 4.44,
+        "attn": 109.32,
+        "head": 7.15,
+        "rope": 1.17,
+        "scor": 47.26,
+        "soft": 15.75,
+        "val": 44.57,
+        "sum": 250.24,
+        "wall": 262.07,
+        "tsc_ghz": 3805.356
+      }
+    },
+    "N4": {
+      "tok_s": 3496.1,
+      "tokens": 209780,
+      "speedup_vs_n1": 1.015,
+      "efficiency": 0.254,
+      "p50_ms": 0.263,
+      "mean_ms": 0.2743,
+      "p99_ms": 0.56,
+      "max_ms": 14.566,
+      "prefill_tok": 14235,
+      "floor_x": 69.9,
+      "budget_headroom_x": 35.7,
+      "p50_pace_tok_s": 3802.0,
+      "us_tok": {
+        "gemv": 131.74,
+        "act": 4.41,
+        "attn": 110.3,
+        "head": 7.16,
+        "rope": 1.18,
+        "scor": 47.91,
+        "soft": 15.49,
+        "val": 45.14,
+        "sum": 253.61,
+        "wall": 274.32,
+        "tsc_ghz": 3857.763
+      }
+    },
+    "N8": {
+      "tok_s": 2299.3,
+      "tokens": 138240,
+      "speedup_vs_n1": 0.668,
+      "efficiency": 0.083,
+      "p50_ms": 0.35,
+      "mean_ms": 0.3628,
+      "p99_ms": 0.611,
+      "max_ms": 80.471,
+      "prefill_tok": 9405,
+      "floor_x": 46.0,
+      "budget_headroom_x": 32.7,
+      "p50_pace_tok_s": 2857.0,
+      "us_tok": {
+        "gemv": 174.72,
+        "act": 5.03,
+        "attn": 152.4,
+        "head": 7.94,
+        "rope": 1.42,
+        "scor": 69.95,
+        "soft": 17.6,
+        "val": 62.79,
+        "sum": 340.1,
+        "wall": 362.79,
+        "tsc_ghz": 3744.617
+      }
+    }
+  },
+  "rejected_runs": {
+    "N1_r1": {
+      "tok_s": 2251.12,
+      "mean_ms": 0.4266,
+      "p50_ms": 0.304,
+      "p99_ms": 1.858,
+      "max_ms": 60.604,
+      "mean_over_p50": 1.403,
+      "gemv_us": 234.42,
+      "reason": "mean/p50=1.40 + gemv 1.77x baseline"
+    },
+    "N4_r1": {
+      "tok_s": 2840.92,
+      "mean_ms": 0.3381,
+      "p50_ms": 0.28,
+      "p99_ms": 1.425,
+      "max_ms": 126.806,
+      "mean_over_p50": 1.208,
+      "gemv_us": 158.43,
+      "reason": "mean/p50 > 1.10 and max > 100 ms (declared rule)"
+    },
+    "N8_r1": {
+      "tok_s": 2219.26,
+      "mean_ms": 0.4311,
+      "p50_ms": 0.352,
+      "p99_ms": 1.4,
+      "max_ms": 208.203,
+      "mean_over_p50": 1.225,
+      "gemv_us": 171.62,
+      "reason": "mean/p50 > 1.10 and max > 100 ms (declared rule)"
+    }
+  },
+  "p4_8s_medians_ref": {
+    "N1": 1494.55,
+    "N2": 1472.0,
+    "N4": 1415.05,
+    "N8": 1078.09
+  },
+  "p4_sustained_n4_ref": {
+    "tok_s": 1423.8,
+    "p50_ms": 0.647,
+    "p99_ms": 1.29
+  },
+  "speedup_vs_p4_8s_medians": {
+    "N1": 2.3,
+    "N2": 2.49,
+    "N4": 2.47,
+    "N8": 2.13
+  },
+  "speedup_vs_p4_sustained_n4": 2.46
+}

@@ -1,0 +1,125 @@
+{
+  "phase": "3",
+  "date": "2026-10-08",
+  "title": "elastic pipeline + speculative decode (bonus)",
+  "plan_ref": "COREFLOW_PLAN.md §3.5 D1-D8, §5 Phase-3",
+  "design": {
+    "architecture": "A' dual-path: main feed (sync_feed/spec_feed into stream 0) + private draft side-stream (draft_t: own conv cbufs, attn KV shared by pointer copy); d1 uses pending known token, d2..dk re-feed draft tokens",
+    "conv_state": "cbuf shift-register is non-idempotent -> cvsnap: per-layer conv snapshots keyed pos&7 (cvs_pos tag array), restore before draft on rejection, drop only rejected suffix",
+    "verify": "Leviathan/Chen rejection sampling; kp=1 path bit-identical to plain",
+    "auto_d8": "probe plain vs spec, spec needs acceptance >= 0.40 AND >= 10% probe speed win, else plain"
+  },
+  "precheck": {
+    "tool": "p3_precheck.py (dff 400/396/392, dhead exported INSIDE model file)",
+    "candidates": [
+      {"dff": 400, "export_bytes": 1975810, "ws": 2101302, "ws_pct_l3": 50.1, "fit_half_l3": false, "verdict": "FAIL - over budget by 4150 B once dhead (29888 B) included"},
+      {"dff": 396, "export_bytes": 1965250, "ws": 2090710, "ws_pct_l3": 49.8, "fit_half_l3": true, "verdict": "CHOSEN - max capacity within budget, slack 6442 B"},
+      {"dff": 392, "export_bytes": 1954690, "ws": 2080118, "ws_pct_l3": 49.6, "fit_half_l3": true, "verdict": "PASS but less capacity"}
+    ],
+    "uniformity_n4": {"400": 1.08, "396": 1.09, "392": 1.09}
+  },
+  "model": {
+    "arch": {"d": 144, "dff": 396, "nconv": 4, "natt": 2, "heads": 8, "kv": 1, "ctx": 1024, "vocab": 4096, "softcap": 30.0, "k": 4, "nblocks": 6, "blocks": "[C,C,A,C,C,A]", "stage_dropout": 0.1},
+    "params_incl_dhead": 1907568,
+    "dhead": {"enabled": 1, "depth": 3, "ff": 64, "rot": 1, "lambda": 0.3, "params": 27936, "pct_of_model": 1.46, "bytes_in_file": 29888, "structure": "RMSNorm + MLP(144,64) residual + RMSNorm + tied wte"},
+    "layerskip_recipe": ["depth-increasing stage-dropout 0.1", "early-exit aux CE loss lambda=0.3", "rotational exit (train), fixed exit (eval)", "joint training"],
+    "export": {"file": "phase0/model_p3.i8", "bytes": 1965250, "ir": "phase0/stages_p3.json", "manifest": "phase0/model_p3.manifest.json", "uniformity_n4_cost_mac_max_avg": 1.086, "n4_costs": [426096, 578448, 578448, 589968]}
+  },
+  "training": {
+    "steps": 17610, "epochs": 3, "batch": 4, "seq": 1024, "lr": 3e-4, "warm": 200,
+    "seed": 7, "platform": "Kaggle T4 (same recipe as p2b)", "ckpt": "run/p3/run/best.pt",
+    "val_ppl": 26.8135, "accept_depth3_full_val": 0.7294,
+    "acceptance_sweep_full_val": {"1": 0.4517, "2": 0.5284, "3": 0.7294, "4": 0.8048, "5": 0.8644},
+    "final_ppl": 26.5402
+  },
+  "gates": {
+    "g1_speed": {"pass": true, "tok_s": 1536.71, "p99_ms": 1.118, "sec": 60, "criterion": ">=50 tok/s sustained 60s", "rerun_note": "first run 1456.3 during box contention, clean re-run"},
+    "g2_cache_fit": {"pass": true, "ws_bytes": 2090710, "budget_bytes": 2097152, "ws_pct_l3": 49.8, "evict_slowdown": 1.586, "dram_gb_s": 17.35, "criterion": "ws <= 1/2 L3 and evict >=1.5x"},
+    "g3_parity": {"pass": true, "c_ppl": 26.841702, "torch_ppl": 26.818758010864258, "rel_pct": 0.0856, "criterion": "<=0.1%"},
+    "g4_uniformity": {"pass": true, "metric": "N=4 partition cost max/avg", "max_avg": 1.086, "criterion": "<=1.10"},
+    "stage_bench_n4": {"tok_s": 1445.81, "p99_ms": 1.263},
+    "all_pass": true
+  },
+  "draft_parity": {
+    "tool": "p3_draft_parity.py", "steps": 512, "depth": 3,
+    "token_match": 0.98633, "threshold": 0.98, "pass": true,
+    "conf_mean_absdiff": 0.00275, "mismatches": 7, "mism_conf_mean": 0.08088
+  },
+  "bugs_found_and_fixed": [
+    {"id": "float-ptr-arithmetic", "symptom": "ASan WRITE at end of region in cvs_save (slot 1) / OOB read in cvs_restore", "cause": "rt->cvs + slot*cv_bytes(...) advanced cv_bytes FLOATS = 4x byte count", "fix": "byte-pointer arithmetic: (char*)rt->cvs + ((size_t)ci*8+sl)*cb", "severity": "silent heap corruption in every non-ASan plain run (save at ci=1,sl=0 landed exactly at base+55296)"},
+    {"id": "s-pos-race", "symptom": "spec runs nondeterministic, plain deterministic", "cause": "spec_feed pushes kp msgs back-to-back; shared st[0].pos touched by main (spec_feed) and G1 (run_blocks) concurrently", "fix": "pos passed explicitly: cf_blocks(m,s,t,pos,lo,hi,x), run_blocks(G,s,pos,x); call sites use rt->c_pos[sid]/m.pos/pos"},
+    {"id": "auto-quiet", "symptom": "auto probe spewed 6 JSON lines", "fix": "rt->quiet gates entire do_gen/do_gen_spec printf; auto prints exactly 2 lines (decision + final run)"},
+    {"id": "diagnostics", "fix": "all debug prints (E/S/R/BADS/BADSRC/BADR, T1-T8, SETUP) removed after root-cause"}
+  ],
+  "lossless_battery": {
+    "determinism": {"plain_n2_x3": "identical", "spec_n2_x3": "identical"},
+    "plain_eq_spec": [
+      {"N": 2, "ntok": 512, "cfg": "default kmax4/tau0.5", "identical": true},
+      {"N": 4, "ntok": 512, "cfg": "default kmax4/tau0.5", "identical": true},
+      {"N": 2, "ntok": 512, "cfg": "kmax8/tau0.001", "identical": true},
+      {"N": 4, "ntok": 512, "cfg": "kmax8/tau0.001", "identical": true}
+    ],
+    "ctx_boundary": {"ntok": 2000, "cfgs": ["spec", "spec kmax8 tau0.001"], "both_stop_at": 959, "counts_equal": true, "prefix_identical": true},
+    "n1_fused_identity": {"phase0_exe_vs_stage_rt_n2": "32 tokens identical"},
+    "asan_final": {"runs": ["spec 512", "spec kmax8/tau0.001 512", "auto 256"], "errors": 0, "exit": 0},
+    "final_battery_after_all_edits": {"configs": 8, "fails": 0}
+  },
+  "auto_d8": {
+    "probe": {"tok_per_probe": 128, "reps_per_mode": 2, "aggregation": "average"},
+    "gates": {"acceptance_min": 0.40, "spec_speed_required": "ws < wp * 0.90"},
+    "reliability": {"reps": 6, "chose_plain": 6, "chose_spec": 0, "final_tok_s_range": [1490, 1564]},
+    "note": "before margin hardening (avg2 + 0.95 margin) picks were unstable 4/5; ASan run also chose plain"
+  },
+  "perf_p3_8": {
+    "box": "non-stationary ±20%; interleaved configs, medians within one window; ratios reproduced across two windows",
+    "throughput_n4_ntok900_med3": {
+      "plain": {"tok_s": 1435.4, "raw": [599, 1435, 1464]},
+      "spec_default_kmax4_tau0.5": {"tok_s": 1148.0, "acceptance": 0.9656, "draft_pct": 44.6, "raw": [1062, 1148, 1195]},
+      "spec_kmax8_tau0.001": {"tok_s": 991.2, "acceptance": 0.6108, "draft_pct": 52.4, "raw": [961, 991, 994]},
+      "ratios": {"spec_over_plain": 0.80, "spec8_over_plain": 0.69},
+      "prior_window": {"plain": 1394, "spec": 1114, "spec8": 925, "ratios": [0.80, 0.66]}
+    },
+    "elastic_plain_single_stream_med2": {
+      "N2": 1534.8, "N4": 1399.4, "N8": 982.1,
+      "interpretation": "flat N2->N4 (0.91), SMT knee at N8 (0.70) - reproduces phase-1 finding: single-stream decode has structural ceiling <=1.1-1.2x at any N (phase1_results.json formula_check); multistream K-sweep (K4 = 2.48-2.90x) is the elasticity proof"
+    },
+    "kmax_sweep_tau0.5_ntok512_mean2": {
+      "1": {"acc": 0.0, "draft_pct": 0.2, "tok_s": 1558.5, "note": "kp=1 degenerates to plain path"},
+      "2": {"acc": 1.0, "draft_pct": 31.1, "tok_s": 1169.2},
+      "4": {"acc": 0.9645, "draft_pct": 45.0, "tok_s": 1326.8},
+      "8": {"acc": 0.9355, "draft_pct": 50.9, "tok_s": 1461.0}
+    },
+    "tau_sweep_kmax4_ntok512_mean2": {
+      "0.001": {"acc": 0.742, "draft_pct": 46.3, "tok_s": 1540.0},
+      "0.1": {"acc": 0.9365, "draft_pct": 45.6, "tok_s": 1388.1},
+      "0.5": {"acc": 0.9645, "draft_pct": 46.2, "tok_s": 1514.7},
+      "0.9": {"acc": 1.0, "draft_pct": 48.2, "tok_s": 1188.5}
+    },
+    "sweep_caveat": "within-spec-config tok_s differences are inside box noise (+-20-40% raw spread); robust signals: (a) acceptance monotonic in tau and kmax, (b) spec/plain = 0.80 reproduced in two independent windows",
+    "verdict": "spec decode is SLOWER than plain on this box (0.80x at best) - matches the spec-theorem warning (expected ~0.91x possible loss) and the plan's risk table (non-blocking); D8 auto keeps it OFF"
+  },
+  "d1_d8_audit": {
+    "D1_vocab_8192": {"pass": true, "evidence": "vocab=4096 <= 8192; head read per token stays small"},
+    "D2_dhead_le_1_stage_8pct": {"pass": "params", "pass_value": "dhead 27936 params = 1.46% of model <= 8%", "fail": "compute", "fail_value": "depth-3 draft runs 3/6 blocks + head -> measured draft_pct 44.6-47.9% of cycle time, exceeds '1 stage' spirit", "consequence": "spec throughput 0.80x plain - exactly the slowdown the D2 evidence predicted for fat drafts; D8 catches it; depth knob (d1-d5 acceptance 45-86%) available but depth<=2 cannot reach the D3 60% gate"},
+    "D3_joint_train_acceptance_60": {"pass": true, "evidence": "LayerSkip recipe joint-trained (no post-hoc); full-val acceptance depth3 = 0.7294 >= 0.60; runtime acceptance at tau0.5 = 0.9656"},
+    "D4_n_le_8_prefer_24": {"pass": true, "evidence": "N in {2,4,8} tested; N=2/4 recommended, N=8 SMT knee -34% confirmed (phase-1)"},
+    "D5_uniformity": {"pass": true, "evidence": "N=4 cost max/avg = 1.086 <= 1.10; G3 variance + draft share (draft share recorded under D2)"},
+    "D6_suffix_only_flush": {"pass": true, "evidence": "cvs_drop(P+rej+2, P+kp-1) + single-token re-feed of ov[rej] (stage_rt.c:700); lossless battery 8/8"},
+    "D7_confidence_threshold": {"pass": true, "evidence": "conf<tau draft stop (stage_rt.c:670), tau validated (0,1] default 0.5; tau sweep acc 0.742->1.0 monotonic"},
+    "D8_auto_off": {"pass": true, "evidence": "acceptance < 0.40 -> plain (stage_rt.c:1145) + 10% speed margin (1148); 6/6 correct picks"}
+  },
+  "all_pass": true,
+  "honest_findings": [
+    "spec decode net-negative on this box (0.80x plain) - auto correctly disables it; bonus pillar remains non-blocking per plan",
+    "single-stream tok/s does not scale with N (structural, phase-1 formula_check); cores buy multistream throughput (K4=2.5-2.9x) and headroom, not single-stream latency",
+    "kmax=1 spec path degenerates to plain (acceptance 0 by construction) - guard: kmax clamped [1,8], default 4",
+    "box contention is first-order: same config measured 599-1464 tok/s across windows; all claims are within-window ratios"
+  ],
+  "artifacts": {
+    "model": "phase0/model_p3.i8", "ir": "phase0/stages_p3.json", "manifest": "phase0/model_p3.manifest.json",
+    "gates": "phase0/gates_p3.json", "ckpt": "run/p3/run/best.pt",
+    "runtime": "phase0/stage_rt.c (+ cf_model.c/h pos-param refactor)",
+    "tests": ["p3_draft_parity.py", "p3_precheck.py", "phase0/phase0_gates.py"],
+    "precheck_ckpts": ["phase0/pre_p396.pt", "phase0/pre_p392.pt"]
+  }
+}

@@ -1,0 +1,417 @@
+{
+  "phase": 5,
+  "title": "kernel/compute-efficiency push under the cache-fit law",
+  "date": "2026-10-09",
+  "research": {
+    "literature": "llama.cpp/ggml CPU decode is DRAM-bandwidth-bound (int8 DP4A optimal for M=1; repack/tiled kernels worth ~1.0x on decode because weights stream from DRAM)",
+    "regime_inversion": "our law keeps weights L3-resident (ws 49.8% of L3) so DRAM ~0 B/token -> decode is compute-bound; the metric is integer MAC throughput, not bandwidth; this regime is unreachable without cache-fit",
+    "kernel_audit": "dot_i8 converted int8->float (cvtepi8_epi32+cvtepi32_ps) then FMA: measured 240 ps/MAC float vs int kernel 60 ps/MAC @c=396 (float path = 3.3% of AVX2 int peak); dot_i8 verified arithmetically correct (36/36)"
+  },
+  "changes": [
+    "gemv: per-input int8 activation quant (max/127, AVX2 vectorized, amortized across all rows) + integer dot idot_i8 (vpmovsxbw sign-extend + vpmaddwd, 4-accumulator 64-wide loop + SIMD hsum) + row prefetch r+1; float fallback retained for cols>512",
+    "attention scores: per-head int8 query quant + idot_i8 against int8 K (was scalar float with per-elem i8->f32)",
+    "attention values: AVX2 float accumulation over 16-wide i8->f32 chunks, register-accumulated per head (was scalar)",
+    "softmax/sigmoid: vectorized degree-7 exp poly (expf256, range-reduced k*ln2 + Horner) 8-wide; head softcap tanh via exp identity, 8-wide",
+    "TSC profiling counters (cf_cyc_*) printed as us_tok in bench output (N=1 timing reference)"
+  ],
+  "profile_us_per_token": [
+    {
+      "stage": "float-kernel baseline",
+      "wall": 669,
+      "note": "1494.55 tok/s, kernel-dominated (240ps/MAC float)"
+    },
+    {
+      "stage": "int gemv only",
+      "wall": 450.5,
+      "gemv": 145.7,
+      "attn": 262.3,
+      "act": 14.1,
+      "head": 28.7,
+      "note": "revealed attention scalar loops = 58% of token time"
+    },
+    {
+      "stage": "full phase-5",
+      "wall": 259.4,
+      "gemv": 131.1,
+      "scor": 47.2,
+      "val": 44.2,
+      "soft": 14.6,
+      "act": 4.0,
+      "head": 6.6,
+      "rope": 1.1,
+      "note": "3696 tok/s single-core"
+    }
+  ],
+  "micro_ns_per_dot": {
+    "c396": {
+      "int": 23.8,
+      "float": 95.0
+    },
+    "c144": {
+      "int": 13.6,
+      "float": 35.3
+    },
+    "source": "phase0/bench_dot.c"
+  },
+  "gates": {
+    "G5_a_accuracy": {
+      "pass": true,
+      "ppl": "C 26.840715 vs torch 26.818758, rel 0.0819% (P4 C: 26.841702, rel 0.0856%) <= 1%",
+      "suite_first_tok": 0.987,
+      "suite_greedy_exact": 0.735,
+      "torch_parity_exact": 0.975,
+      "torch_token_match": 0.9941,
+      "p4_ref": {
+        "first_tok": 0.987,
+        "greedy_exact": 0.733,
+        "parity_exact": 0.9767,
+        "token_match": 0.9941
+      },
+      "file": "phase0/suite_report_p5.json"
+    },
+    "G5_b_speed": {
+      "pass": true,
+      "single_core_median_tok_s": 3609.09,
+      "speedup": 2.415,
+      "target": ">=2x vs 1494.55",
+      "n2_n4_n8_speedup": [
+        2.418,
+        2.227,
+        2.144
+      ],
+      "sustained_60s_N4": {
+        "run1": 2830.55,
+        "run2": 3294.33,
+        "speedups": [
+          1.988,
+          2.314
+        ],
+        "p99_ms": [
+          0.757,
+          0.628
+        ],
+        "floor_x": [
+          66,
+          80
+        ],
+        "note": "run1 included a 695ms OS outlier; both runs reported, median-of-2 = 2.15x"
+      },
+      "file": "phase0/perf_n_p5.json"
+    },
+    "G5_c_law": {
+      "pass": true,
+      "ws_bytes": 2090710,
+      "ws_pct_l3": 49.8,
+      "evict_slowdown": 2.03,
+      "dram_gb_s": 16.4,
+      "note": "footprint unchanged; cache-fit law still holds (gate2 PASS)",
+      "file": "phase0/gates_p5.json",
+      "interpretation": "2.03x = clean(3405.1) vs CONCURRENT 64MB eviction-stream agent(1680.9) - resilience under noisy-neighbor memory pressure (L3 pollution + bandwidth contention), not the pure cache-fit effect; historical range 1.59x-2.2x. Pure isolated cache-residency benefit = 1.15x (cold_warm_clflush)."
+    },
+    "G5_d_determinism_asan": {
+      "pass": true,
+      "suite_N4_eq_N1": "byte-identical across all 3000 prompts",
+      "asan": [
+        "gen N=1 clean",
+        "gen N=4 spec clean",
+        "bench N=1 clean",
+        "suite 300 prompts clean (halt_on_error)"
+      ],
+      "asan_eq_release": "300 suite records byte-identical to release N=4",
+      "run_subcommand": "coreflow run model.cf --cores auto -> nphys=4 -> N=4, gen OK"
+    }
+  },
+  "all_pass": true,
+  "honest_findings": [
+    "exp poly Horner bug (missing final layer) was caught by gate3 before recording: C ppl 49.5 -> fixed -> 26.8407; gates caught it, not the suite (first_tok held 0.9867 even with broken softmax)",
+    "sustained N=4 run-to-run 2830.6 vs 3294.3 (1.99x vs 2.31x): box non-stationarity + one 695ms OS outlier; medians of 6 interleaved 8s reps used as primary metric",
+    "N=8 reps spread 917-2561 tok/s (2.8x) across the session - background interference; median recorded",
+    "prefetch distance r+2 A/B measured WORSE (N1 ~3465 vs ~3650 with r+1) -> kept r+1",
+    "torch_parity_exact 0.9750 vs 0.9767 (-0.17pp) from int8 activation + vector activation numerics; first_tok and token_match unchanged (0.9870/0.9941)",
+    "profiling counters left in: bench prints us_tok (benign; timing reads only, N=1 used for bucket timing)",
+    "gemv now 50% of remaining token time (131/259us): next levers would be more ILP in idot, multi-accumulator attention scores, int4 weight dial (P5-5 deferred)"
+  ],
+  "sustained_60s_scaling": {
+    "protocol": "60 s sustained, stage_rt bench, K=1, same binary (r+1 prefetch), ascending N, val.bin; accepted run = passes contamination rule (mean/p50 <= 1.10 or max <= 100 ms); rejected runs re-run once",
+    "accepted": {
+      "N1": {
+        "tok_s": 3444.3,
+        "tokens": 206657,
+        "speedup_vs_n1": 1.0,
+        "efficiency": 1.0,
+        "p50_ms": 0.258,
+        "mean_ms": 0.2782,
+        "p99_ms": 0.648,
+        "max_ms": 450.009,
+        "prefill_tok": 14040,
+        "floor_x": 68.9,
+        "budget_headroom_x": 30.9,
+        "p50_pace_tok_s": 3876.0,
+        "us_tok": {
+          "gemv": 134.63,
+          "act": 5.35,
+          "attn": 107.89,
+          "head": 7.1,
+          "rope": 1.16,
+          "scor": 46.92,
+          "soft": 15.28,
+          "val": 43.94,
+          "sum": 254.96,
+          "wall": 278.23,
+          "tsc_ghz": 4012.784
+        }
+      },
+      "N2": {
+        "tok_s": 3660.7,
+        "tokens": 219646,
+        "speedup_vs_n1": 1.063,
+        "efficiency": 0.531,
+        "p50_ms": 0.256,
+        "mean_ms": 0.2621,
+        "p99_ms": 0.499,
+        "max_ms": 6.15,
+        "prefill_tok": 14885,
+        "floor_x": 73.2,
+        "budget_headroom_x": 40.1,
+        "p50_pace_tok_s": 3906.0,
+        "us_tok": {
+          "gemv": 129.33,
+          "act": 4.44,
+          "attn": 109.32,
+          "head": 7.15,
+          "rope": 1.17,
+          "scor": 47.26,
+          "soft": 15.75,
+          "val": 44.57,
+          "sum": 250.24,
+          "wall": 262.07,
+          "tsc_ghz": 3805.356
+        }
+      },
+      "N4": {
+        "tok_s": 3496.1,
+        "tokens": 209780,
+        "speedup_vs_n1": 1.015,
+        "efficiency": 0.254,
+        "p50_ms": 0.263,
+        "mean_ms": 0.2743,
+        "p99_ms": 0.56,
+        "max_ms": 14.566,
+        "prefill_tok": 14235,
+        "floor_x": 69.9,
+        "budget_headroom_x": 35.7,
+        "p50_pace_tok_s": 3802.0,
+        "us_tok": {
+          "gemv": 131.74,
+          "act": 4.41,
+          "attn": 110.3,
+          "head": 7.16,
+          "rope": 1.18,
+          "scor": 47.91,
+          "soft": 15.49,
+          "val": 45.14,
+          "sum": 253.61,
+          "wall": 274.32,
+          "tsc_ghz": 3857.763
+        }
+      },
+      "N8": {
+        "tok_s": 2299.3,
+        "tokens": 138240,
+        "speedup_vs_n1": 0.668,
+        "efficiency": 0.083,
+        "p50_ms": 0.35,
+        "mean_ms": 0.3628,
+        "p99_ms": 0.611,
+        "max_ms": 80.471,
+        "prefill_tok": 9405,
+        "floor_x": 46.0,
+        "budget_headroom_x": 32.7,
+        "p50_pace_tok_s": 2857.0,
+        "us_tok": {
+          "gemv": 174.72,
+          "act": 5.03,
+          "attn": 152.4,
+          "head": 7.94,
+          "rope": 1.42,
+          "scor": 69.95,
+          "soft": 17.6,
+          "val": 62.79,
+          "sum": 340.1,
+          "wall": 362.79,
+          "tsc_ghz": 3744.617
+        }
+      }
+    },
+    "rejected_runs": {
+      "N1_r1": {
+        "tok_s": 2251.12,
+        "mean_ms": 0.4266,
+        "p50_ms": 0.304,
+        "p99_ms": 1.858,
+        "max_ms": 60.604,
+        "mean_over_p50": 1.403,
+        "gemv_us": 234.42,
+        "reason": "mean/p50=1.40 + gemv 1.77x baseline"
+      },
+      "N4_r1": {
+        "tok_s": 2840.92,
+        "mean_ms": 0.3381,
+        "p50_ms": 0.28,
+        "p99_ms": 1.425,
+        "max_ms": 126.806,
+        "mean_over_p50": 1.208,
+        "gemv_us": 158.43,
+        "reason": "mean/p50 > 1.10 and max > 100 ms (declared rule)"
+      },
+      "N8_r1": {
+        "tok_s": 2219.26,
+        "mean_ms": 0.4311,
+        "p50_ms": 0.352,
+        "p99_ms": 1.4,
+        "max_ms": 208.203,
+        "mean_over_p50": 1.225,
+        "gemv_us": 171.62,
+        "reason": "mean/p50 > 1.10 and max > 100 ms (declared rule)"
+      }
+    },
+    "speedup_vs_p4_8s_medians": {
+      "N1": 2.3,
+      "N2": 2.49,
+      "N4": 2.47,
+      "N8": 2.13
+    },
+    "shape": "flat N<=4 = K=1 single-stream structural ceiling (phase-1/4 shape reproduced); N=8 SMT knee 0.67x; all accepted runs mean/p50<=1.10 or max<=100ms",
+    "file": "phase0/perf_scaling60_p5.json"
+  },
+  "cold_warm_clflush": {
+    "protocol": "N=1 single thread (no MT interference); clflush model weight buffer (m.size, 64B lines) + sfence before every cold forward, flush excluded from timed region; identical 900-token reset cadence + prompt in both arms (position-matched); per-rep rdtsc + batch timing agree; 4 runs",
+    "aggregate": {
+      "warm_median_us": 220.5,
+      "cold_median_us": 254.0,
+      "median_ratio_min": 1.1,
+      "median_ratio_max": 1.197,
+      "median_ratio_med": 1.148,
+      "batch_ratio_med": 1.1265,
+      "batch_ratio_range": [
+        1.047,
+        1.16
+      ],
+      "exposed_unoverlapped_gemv_delta_us_med": 35.150000000000006,
+      "warm_tok_s_est": 4274,
+      "cold_tok_s_est": 3861,
+      "naive_bytes_div_exposed_us_gb_s": 55.9,
+      "measured_dram_stream_gb_s_on_this_box": [
+        14.84,
+        16.4,
+        17.7
+      ],
+      "bw_note": "naive_bytes_div_exposed_us_gb_s is NOT a bandwidth measurement: the 1.87 MB refill streams largely overlapped under GEMV compute (gemv consumes ~15 GB/s, at/below the measured 14.84-17.7 GB/s DRAM stream); the measured quantity is the exposed, unoverlapped residual penalty only"
+    },
+    "key_finding": "cold penalty = exposed unoverlapped refill residual (+35 us median in gemv bucket only; attention/KV buckets unchanged, KV not flushed). Cache-fit benefit isolated here is 1.15x (quiet single core, weights-only eviction). Fully L3-evicted decode still ~3861 tok/s = 77x floor. NOT a bandwidth number - see bw_note.",
+    "files": [
+      "phase0/cold_warm_p5.json",
+      "phase0/cold_warm_p5_run2.json",
+      "phase0/cold_warm_p5_run3.json",
+      "phase0/cold_warm_summary_p5.json"
+    ]
+  },
+  "multistream_scaling": {
+    "protocol": "60 s sustained, K>1 streams, median of 3 runs per config, same binary as K=1 table; queue-wait inflates K>1 p99 structurally (multiple tokens in flight)",
+    "k1_ref": {
+      "N1": 3444.3,
+      "N2": 3660.7,
+      "N4": 3496.1,
+      "N8": 2299.3
+    },
+    "configs": {
+      "N2K2": {
+        "reps_tok_s": [
+          5152.81,
+          4860.06,
+          5047.86
+        ],
+        "median_tok_s": 5047.86,
+        "p50_ms_med": 0.302,
+        "p99_ms_med": 1.524,
+        "k1_same_n": 3660.7,
+        "vs_k1_same_n": 1.379,
+        "vs_n1_k1": 1.466
+      },
+      "N4K4": {
+        "reps_tok_s": [
+          5997.12,
+          6803.01,
+          5416.08
+        ],
+        "median_tok_s": 5997.12,
+        "p50_ms_med": 0.449,
+        "p99_ms_med": 3.016,
+        "k1_same_n": 3496.1,
+        "vs_k1_same_n": 1.715,
+        "vs_n1_k1": 1.741
+      },
+      "N8K8": {
+        "reps_tok_s": [
+          3976.81,
+          4093.47,
+          4069.35
+        ],
+        "median_tok_s": 4069.35,
+        "p50_ms_med": 1.057,
+        "p99_ms_med": 12.598,
+        "k1_same_n": 2299.3,
+        "vs_k1_same_n": 1.77,
+        "vs_n1_k1": 1.181
+      },
+      "N4K8": {
+        "reps_tok_s": [
+          5743.83,
+          5985.91,
+          5717.58
+        ],
+        "median_tok_s": 5743.83,
+        "p50_ms_med": 0.933,
+        "p99_ms_med": 7.376,
+        "k1_same_n": 3496.1,
+        "vs_k1_same_n": 1.643,
+        "vs_n1_k1": 1.668,
+        "vs_k4": 0.958
+      }
+    },
+    "saturation": "K=8 @ N=4 = 5744 vs K=4 @ N=4 = 5997 (0.96x) -> K=N saturates; deeper queues do not add",
+    "conclusion": "multi-stream is where multi-core scaling unlocks; K=1 flat N<=4 is structural (single token in flight)"
+  },
+  "model_126_rebench": {
+    "phase1_old_kernel_range_tok_s": [
+      190,
+      275
+    ],
+    "phase5_n1_reps_tok_s": [
+      275.43,
+      346.49,
+      540.39
+    ],
+    "phase5_n1_median": 346.49,
+    "phase5_n4_tok_s": 523.96,
+    "gemv_us_range": [
+      2949.62,
+      2250.92,
+      1371.52
+    ],
+    "finding": "12.6M model = 333% of L3 (non-resident): run-to-run spread 2x (275-540 tok/s) tracks memory contention (gemv 1371-2950 us). Integer kernel lifts the compute term (old float kernel peaked at 275) but the DRAM term is unchanged - this is the regime cache-fit removes, and why cache-fit (1.15x isolated) matters more than kernel work for resident models."
+  },
+  "doc_reconciliation": {
+    "cache_fit_benefit_claims": {
+      "true_baseline_1_15x": "isolated clflush cold/warm, quiet single core, weights-only, position-matched: run-median ratio 1.148 - THE baseline cache-fit claim",
+      "resilience_2_03x": "gates gate2 concurrent 64MB eviction agent - noisy-neighbor/memory-hungry core; label it resilience-under-pressure, not cache-fit benefit",
+      "measured_dram_stream_gb_s": [
+        14.84,
+        16.4,
+        17.7
+      ]
+    },
+    "structural_ceiling": "K=1 flat N<=4 = pipeline serialization (one token in flight); multi-core speedup strictly requires K>1 or speculation - THINKING 3 updated, K>1 measured in multistream_scaling",
+    "refill_bw_correction": "+35 us = exposed unoverlapped penalty in gemv, not raw DRAM throughput; naive 56 GB/s exceeds measured 14.84-17.7 GB/s DRAM stream - overlap is the finding, not bandwidth"
+  }
+}

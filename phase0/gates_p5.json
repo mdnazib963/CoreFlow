@@ -1,0 +1,101 @@
+{
+  "model": "phase0/model_p3.i8",
+  "ckpt": "run/p3/run/best.pt",
+  "ts": "2026-10-09 03:26:14",
+  "info": {
+    "file_bytes": 1965250,
+    "d": 144,
+    "dff": 396,
+    "nconv": 4,
+    "natt": 2,
+    "heads": 8,
+    "kv": 1,
+    "ctx": 1024,
+    "vocab": 4096,
+    "softcap": 30.0,
+    "working_set": 2090710,
+    "l3": 4096,
+    "ws_pct_l3": 49.8,
+    "fit_half_l3": true
+  },
+  "stream": {
+    "mode": "stream",
+    "sec": 2.005,
+    "passes": 245,
+    "gb_s": 16.4
+  },
+  "clean": {
+    "mode": "clean",
+    "tokens": 51077,
+    "sec": 15.0,
+    "tok_s": 3405.11,
+    "mean_ms": 0.2819,
+    "p50_ms": 0.261,
+    "p99_ms": 0.704,
+    "max_ms": 14.004,
+    "cycles": 54,
+    "prefill_tok_s": 6126
+  },
+  "evict_write": {
+    "mode": "evict_write",
+    "tokens": 11008,
+    "sec": 15.009,
+    "tok_s": 733.43,
+    "mean_ms": 1.3014,
+    "p50_ms": 1.198,
+    "p99_ms": 3.394,
+    "max_ms": 34.54,
+    "cycles": 12,
+    "prefill_tok_s": 1178
+  },
+  "evict_read": {
+    "mode": "evict_read",
+    "tokens": 25258,
+    "sec": 15.026,
+    "tok_s": 1680.93,
+    "mean_ms": 0.5668,
+    "p50_ms": 0.539,
+    "p99_ms": 1.081,
+    "max_ms": 28.427,
+    "cycles": 27,
+    "prefill_tok_s": 2603
+  },
+  "c_ppl": {
+    "windows": 80,
+    "seq": 1024,
+    "ntok": 81840,
+    "nll": 3.28992,
+    "ppl": 26.840715
+  },
+  "torch_ppl": {
+    "windows": 80,
+    "seq": 1024,
+    "ntok": 81840,
+    "nll": 3.289101704497724,
+    "ppl": 26.818758010864258,
+    "step": 17610
+  },
+  "verdict": {
+    "gate1_speed": {
+      "pass": true,
+      "tok_s": 3405.11,
+      "p99_ms": 0.704,
+      "sec": 15.0
+    },
+    "gate2_cache": {
+      "pass": true,
+      "ws_bytes": 2090710,
+      "ws_pct_l3": 49.8,
+      "evict_slowdown": 2.0257298043345053,
+      "dram_gb_s": 16.4
+    },
+    "gate3_parity": {
+      "pass": true,
+      "c_ppl": 26.840715,
+      "torch_ppl": 26.818758010864258,
+      "delta": 0.021956989135741622,
+      "rel": 0.0008187175978412894
+    },
+    "all_pass": true
+  }
+}

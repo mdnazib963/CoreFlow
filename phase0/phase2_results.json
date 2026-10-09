@@ -1,0 +1,39 @@
+{
+  "phase": "2",
+  "date": "2026-10-08",
+  "platform": {
+    "trainer": "Kaggle GPU T4 (free tier, private dataset coreflow-phase2-data, kernel coreflow-phase-2-train)",
+    "smoke": "200 steps, device cuda, ~100k tok/s, output roundtrip PASS",
+    "cli_note": "kaggle==2.2.4 update path returns 409 (SaveKernel id_no=None treated as create) - workflow is kaggle kernels delete -y + push"
+  },
+  "model": {
+    "arch": {"d": 144, "dff": 400, "nconv": 4, "natt": 2, "heads": 8, "kv": 1, "ctx": 1024, "vocab": 4096, "softcap": 30.0, "stage_dropout": 0.1, "blocks": "[C,C,A,C,C,A]"},
+    "params_torch_incl_dhead": 1917936,
+    "params_export_excl_dhead": 1889936,
+    "dhead": {"enabled": 1, "depth": 3, "ff": 64, "params": 27936, "pct_of_model": 1.46, "rot": 1, "lambda": 0.3, "structure": "RMSNorm + MLP(144,64) residual + RMSNorm + tied wte"},
+    "layerskip_recipe": ["depth-increasing stage-dropout 0.1", "early-exit aux CE loss lambda=0.3", "rotational exit (train), fixed exit (eval)", "joint training"],
+    "qat": {"implemented": true, "used": false, "reason": "PTQ-first per plan; parity 0.029% << threshold", "mechanism": "per-row STE fake-quant, identical formula to phase0_export.q_rows"}
+  },
+  "ablation_runs": [
+    {"id": "p2-dff448", "dff": 448, "val_ppl": 30.8997, "accept": 0.6884, "export_bytes": 2072482, "ws": 2198358, "ws_pct_l3": 52.4, "fit_half_l3": false, "verdict": "cache-fit FAIL - retrained at dff=400"},
+    {"id": "p2b-dff400", "dff": 400, "val_ppl": 28.6003, "accept": 0.7203, "export_bytes": 1945762, "ws": 2071254, "ws_pct_l3": 49.4, "fit_half_l3": true, "verdict": "ALL PASS"}
+  ],
+  "training": {
+    "steps": 17610, "epochs": 3, "batch": 4, "seq": 1024, "lr": 3e-4, "warm": 200,
+    "seed": 7, "wall_s_kaggle_t4": 1020, "protocol": "identical to p0b (baseline comparable)",
+    "val_history_final": {"step": 17610, "val_ppl": 28.6003, "accept": 0.7203}
+  },
+  "gates": {
+    "g1_speed": {"pass": true, "tok_s": 1532.1, "p99_ms": 1.10, "sec": 60, "criterion": ">=50 tok/s sustained 60s"},
+    "g2_cache_fit": {"pass": true, "ws_bytes": 2071254, "budget_bytes": 2097152, "ws_pct_l3": 49.4, "evict_slowdown": 1.59, "criterion": "ws <= 1/2 L3 and evict >=1.5x"},
+    "g2_parity": {"pass": true, "c_ppl": 28.601979, "torch_ppl": 28.610235, "rel_pct": 0.0289, "criterion": "<=0.1%"},
+    "g2_ppl_vs_baseline": {"pass": true, "val_ppl": 28.6003, "baseline_p0b": 30.165825, "delta_pct": -5.19, "criterion": "no regression vs p0b 30.16", "note": "improvement - stage-dropout + aux-loss act as regularizers"},
+    "g3_uniformity": {"pass": true, "metric": "partition max/avg at deployment N=4", "max_avg": 1.08, "partition": {"0-2": 429552, "3-4": 581904, "5-6": 581904, "head": 589968}, "criterion": "<=1.10", "p0b_was": 1.1008, "n2_max_avg": 1.05, "structural_note": "head unit = 26.1% of all MACs is atomic - N>=5 cannot pass without head row-split (v2 IR change, cross-core argmax)"},
+    "g4_acceptance": {"pass": true, "metric": "argmax(draft)==argmax(final) on full val (118784 tok)", "depth3": 0.7209, "criterion": ">=60% at deployment exit depth", "sweep": {"1": 0.4485, "2": 0.5295, "3": 0.7209, "4": 0.7922, "5": 0.8548}, "draft_ppl": {"1": 51.38, "2": 45.77, "3": 31.76, "4": 30.22, "5": 29.25}, "spec_decode": "ON (Phase-3 eligible)"}
+  },
+  "all_pass": true,
+  "artifacts": {
+    "ckpt": "run/p2b_best.pt", "export": "phase0/model_p2b.i8", "ir": "phase0/stages_p2b.json",
+    "gates": "phase0/gates_p2b.json", "kernel": "kaggle/kernel_code.py", "builder": "kaggle/build_kernel.py"
+  }
+}

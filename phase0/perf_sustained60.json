@@ -1,0 +1,1 @@
+{"mode":"stage","N":4,"streams":1,"tokens":85440,"sec":60.008,"tok_s":1423.80,"mean_ms":0.6727,"p50_ms":0.6470,"p99_ms":1.2900,"max_ms":20.2440,"prefill_tok":5829,"barriers_per_token":0,"prefetch":0,"cores":[0,2,4,6],"stage_costs":[426096,578448,578448,589968]}

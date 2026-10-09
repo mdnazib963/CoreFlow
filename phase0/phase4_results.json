@@ -1,0 +1,133 @@
+{
+  "phase": 4,
+  "date": "2026-10-08",
+  "title": "packaging + final reports",
+  "plan_ref": "COREFLOW_PLAN.md \u00a74 Phase-4, \u00a75 Phase-4 record",
+  "P4_1_container": {
+    "format": "CORECF01 + u32 ver=1 + u32 nent + nent x {tag[8], u64 off, u64 size}, blobs 64B-aligned",
+    "entries": ["manifest", "ir", "model"],
+    "file": "phase0/model.cf",
+    "bytes": 1985346,
+    "layout": "manifest=304@128 ir=19613@448 model=1965250@20096",
+    "packer": "cf_pack.py (roundtrip byte-exact verified)",
+    "load_path": "cf_model_load_mem + load_ir_buf, .cf suffix detected in setup()"
+  },
+  "P4_2_run_cli": {
+    "usage": "coreflow run model.cf --cores auto|N --ntok N --bin path --spec --auto --kmax=N --tau=X",
+    "auto_cores": "nphys cap 4 (D4): nphys>=4 -> 4",
+    "spec_auto_off_at_n1": true,
+    "gen_cmd_factored": "shared by gen + run subcommands"
+  },
+  "P4_3_gates": {
+    "G4_a_identity": {
+      "method": "loose .i8+stages vs .cf via legacy CLI vs run CLI, 512 tok",
+      "plain_N4": true,
+      "spec_N4": true,
+      "spec_N2_kmax8_tau001": true,
+      "auto_final": true,
+      "auto_decision": "plain (probe-speed) in both CLIs"
+    },
+    "G4_b_n1": {
+      "N1_vs_N2_512": true,
+      "phase0_vs_N1_512": true,
+      "N1_vs_N2_2000_ctx_boundary_959tok": true
+    },
+    "G4_c_auto_cores": { "nphys": 4, "chosen": 4 },
+    "n1_sequential_bench_4s": { "tok_s": 1489.6, "p50_ms": 0.622, "p99_ms": 1.241, "barriers": 0 },
+    "n4_threaded_bench_4s_regression": { "tok_s": 1393.9 },
+    "asan_smoke": ["gen_N1", "gen_N4_spec", "auto_N2", "bench_N1", "suite_300prompts"],
+    "asan_all_clean": true
+  },
+  "P4_4_accuracy": {
+    "torch_reference": {
+      "ckpt": "run/p3/run/best.pt",
+      "step": 17610,
+      "script": "eval.py --threads 4",
+      "tasks": 1000,
+      "variants": 3,
+      "scored": 3000,
+      "first_tok_acc": 0.987,
+      "greedy_exact_acc": 0.736,
+      "per_variant_exact": { "0": 0.733, "1": 0.74, "2": 0.735 },
+      "answer_ppl": 1.3098,
+      "val_ppl": 26.5658,
+      "ood_ppl": 44.3147,
+      "id_first_tok_acc": 0.7143,
+      "id_greedy_exact": 0.6749,
+      "id_answer_ppl": 1.7642,
+      "eval_sec": 438.7,
+      "file": "run/p3/run/eval.json"
+    },
+    "c_runtime": {
+      "script": "p4_suite.py build/compare + stage_rt suite subcommand",
+      "prompts": 3000,
+      "skipped": 0,
+      "first_tok_acc": 0.987,
+      "greedy_exact_acc": 0.733,
+      "torch_parity_exact": 0.9767,
+      "torch_token_match": 0.9941,
+      "first_tok_delta_vs_torch": 0.0,
+      "greedy_exact_delta_vs_torch": -0.003,
+      "identity_N4_eq_N1_byte_exact": true,
+      "suite_sec": { "N4": 97.1, "N1": 94.2 },
+      "max_prompt_len": 86,
+      "ctx": 1024
+    },
+    "note": "phase3 recorded val_ppl 26.8135 via precheck pipeline; eval.py reference on same ckpt = 26.5658 (different harnesses; task-suite metrics above are eval.py-convention)"
+  },
+  "P4_5_perf": {
+    "method": "bench N x 8.0s, 3 interleaved reps (1,2,4,8 / 8,4,2,1 / 1,2,4,8), medians, K=1, prefetch on, box ~50% desktop load",
+    "N1": { "median": 1494.55, "raw": [1486.75, 1494.55, 1517.57] },
+    "N2": { "median": 1472.0, "raw": [1455.08, 1472.0, 1512.69] },
+    "N4": { "median": 1415.05, "raw": [1314.98, 1415.05, 1446.37] },
+    "N8": { "median": 1078.09, "raw": [983.2, 1078.09, 1085.57] },
+    "sustained60": {
+      "N": 4,
+      "tok_s": 1423.8,
+      "tokens": 85440,
+      "p50_ms": 0.647,
+      "p99_ms": 1.29,
+      "floor_50_met": true,
+      "floor_multiple": 28.5
+    },
+    "single_core": { "tok_s": 1494.55, "floor_50_met": true, "floor_multiple": 29.9 },
+    "shape": "flat N1->N4 (0.95x), SMT knee at N8 (0.72x) - matches phase-1 formula_check ceiling <=1.1-1.2x"
+  },
+  "P4_6_clean_rebuild": {
+    "binaries": ["coreflow.exe", "stage_rt.exe", "stage_rt_asan.exe"],
+    "warnings": 0,
+    "exit": 0,
+    "asan_smoke_all_clean": true
+  },
+  "gates": {
+    "G4_a_token_identity": "PASS",
+    "G4_b_n1_sequential": "PASS",
+    "G4_c_cores_auto": "PASS",
+    "G4_d_action_accuracy": "PASS",
+    "G4_e_perf_sustained": "PASS"
+  },
+  "all_pass": true,
+  "honest_findings": [
+    "N=8 is below N=1 (SMT contention) - reported, not hidden; product default is --cores auto -> 4",
+    "spec/auto remain a net loss (D8): auto chose plain in every fresh run; kept as opt-in flags only",
+    "C-runtime greedy exact is -0.3pp vs torch (int8 argmax flips on 2.3% of prompts) while first-token accuracy is identical to torch at 0.987",
+    "val_ppl differs between precheck pipeline (26.8135) and eval.py (26.5658) on the same ckpt; both recorded",
+    "full 3000-prompt suite under ASan extrapolates to ~28 min (17x slowdown); ASan smoke used 300-prompt subset - all clean"
+  ],
+  "artifacts": [
+    "phase0/model.cf",
+    "cf_pack.py",
+    "p4_suite.py",
+    "phase0/suite_prompts.bin",
+    "phase0/suite_meta.jsonl",
+    "phase0/suite_n4.bin",
+    "phase0/suite_n1.bin",
+    "phase0/suite_report.json",
+    "phase0/perf_n.json",
+    "phase0/perf_sustained60.json",
+    "phase0/eval_p3.log",
+    "run/p3/run/eval.json",
+    "phase0/coreflow.exe",
+    "phase0/stage_rt.exe"
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "date": "2026-10-08",
+  "phase": "phase1-stage-dataflow",
+  "binaries": {"fused": "phase0.exe (N=1)", "stage": "stage_rt.exe", "ir": "stage_ir.py"},
+  "flags": {"pf": "force prefetch-on-idle ON (experimental, default OFF)", "nopf": "force OFF (redundant)", "cores=a,b,c": "override core placement"},
+  "box_caveat": "non-stationary: fused-185 swings 1184-1533 tok/s within minutes, no clock throttle seen; cross-window absolutes invalid; raw runs below grouped by window",
+  "gen_identity": {
+    "model_185": {"tokens": 48, "N": [2, 3, 4, 5, 6, 7, 8], "all_match": true, "also_with_pf_flag": true},
+    "model_126": {"tokens": 32, "N": [2, 4, 8], "all_match": true},
+    "regression_after_topology_query": "MATCH",
+    "bugs_caught": [
+      "js_bool missing: JSON true -> NAN -> (int)NAN=INT_MIN truthy -> intermediate groups ran cf_head early",
+      "ctx-wrap reset continue skipped feed -> g0 deadlock after exactly one cycle",
+      "run_blocks hardcoded 6 blocks -> 126 model (12 blocks) ran half the model"
+    ]
+  },
+  "curve_185_cache_fit_48pct_l3_tok_s": {
+    "note": "30s runs, K=1, prefetch OFF; ranges across windows; bracketed by fused monitors",
+    "N1_fused": [1296.83, 1309.95, 1532.64, 1344.20, 1477.37, 1511.47, 1243.33, 1318.73, 1184.20],
+    "N2": [1200.64, 1534.38, 1472.19, 1209.21],
+    "N3": [1178.65, 1517.01, 1136.44, 1188.28],
+    "N4": [918.75, 1006.65, 1441.95, 1465.90, 1429.63, 787.91, 1009.87, 1009.29, 1024.68],
+    "N8_smt": [879.09, 957.25, 1011.68, 335.72],
+    "N8_note": "335.72 was WITH experimental pf ON; pf OFF runs 879-1012",
+    "best_window_ratios": {"N2_over_fused": 1.001, "N4_over_fused": 0.94, "N8_over_fused": 0.66},
+    "p50_ms": {"fused": [0.619, 0.631, 0.664, 0.676, 0.682], "N2": [0.617, 0.622, 0.686], "N3": [0.619, 0.686, 0.714], "N4": [0.640, 0.643, 0.720, 0.723, 0.738], "N8": [0.832, 0.929]}
+  },
+  "curve_126_dram_bound_333pct_l3_tok_s": {
+    "N1_fused": [212.42, 275.18, 203.46, 213.98, 190.09, 271.58],
+    "N2": [193.55, 270.26, 175.94, 141.44],
+    "N4": [235.68, 261.98, 125.99, 208.35],
+    "N4_note": "125.99 was WITH experimental pf ON (thrash); pf OFF runs 208-262",
+    "p50_ms": {"fused": [3.421, 4.188, 4.453, 3.461], "N4": [3.574, 4.004, 3.992, 4.235]},
+    "ratio_note": "N4/fused within-window: 0.96 and 1.11 (two windows); N2/fused 0.74-0.95"
+  },
+  "multistream_elasticity_185_N4": [
+    {"window": "warm", "K1": 1441.95, "K2": 2894.04, "K4": 4187.91, "speedup_K2": 2.01, "speedup_K4": 2.90},
+    {"window": "degraded", "K1": 1006.65, "K2": 2239.62, "K4": 2492.81, "speedup_K2": 2.23, "speedup_K4": 2.48},
+    {"window": "late", "K1": 1251, "K2": 1812.86, "K4": 2133.79, "speedup_K2": 1.45, "speedup_K4": 1.71}
+  ],
+  "multistream_ideal_ceiling": {"basis": "total/max_group = 2141856/589968", "x_K1": 3.63, "best_window_K4_attainment": "80%"},
+  "probe_gate_c_cold_over_warm_ratio_all_runs": {
+    "model_185": {"N1": [1.082, 0.978, 1.429], "N2": [1.110, 0.995], "N3": [1.168, 0.958], "N4": [1.040, 1.033], "N8_smt": [1.611, 1.019, 1.470, 0.219]},
+    "model_126": {"N1": 1.001, "N4": [0.974, 0.940]},
+    "verdict": "N<=4 stable PASS (0.94-1.17, first-token <=1.25); N=8 unstable 0.22-1.61 FAILS loudly (SMT siblings share one L2 -> one-weight-home violated); 126 already DRAM-bound -> eviction noop",
+    "first_token_ratios_185": {"N1": [1.139, 1.138, 1.999], "N2": [0.971, 1.199], "N3": [1.247, 1.248], "N4": [0.618, 0.975]}
+  },
+  "formula_check": {
+    "model": "T(N) = (B/b)/N + C",
+    "plan_reference_curve": "2.5/(2.5/N+0.05): expects 6.9x at N=8; structurally unreachable here",
+    "structural_ceiling": "1.01 B/MAC -> 57 ps/B at 17.7 GB/s vs measured 278 ps/MAC (3.6 GMAC/s = 3.3% of AVX2 peak) -> bandwidth share <= 17% -> prefetch-parallelism <= ~1.1-1.2x at any N",
+    "model_185": {"Bb_upper_bound_ms": 0.08, "source": "probe forced-DRAM first token (0.659-0.579 ms)", "C_est_ms": 0.59, "prediction": "flat", "measurement": "flat N<=3, -5..7% at N=4", "verdict": "consistent"},
+    "model_126": {"Bb_est_ms": 0.72, "source": "12.77 MB / 17.7 GB/s", "share_of_T1": "17%", "pred_speedup_N4_max": 1.15, "measured_speedup_N4": [0.96, 1.11], "verdict": "consistent within noise; serial demand streaming (no active prefetch) explains low end"}
+  },
+  "prefetch_on_idle_experiment": {
+    "what": "idle groups stream their weight home cyclically while waiting for the next token (plan 3.4 mechanism)",
+    "flag": "pf",
+    "results": {
+      "126_N4": {"pf": [106.95, 84.38, 125.99], "nopf": [215.64, 172.32, 208.35], "verdict": "-2.0x HARM: 4 concurrent streams evict active core's lines from 4MB L3"},
+      "185_N8_smt": {"pf": 335.72, "nopf": [879.09, 957.25, 1011.68], "verdict": "-3.1x HARM: SMT sibling contention"},
+      "185_N4": {"pf": [1384.27, 1128.08], "nopf": [1417.66, 993.84], "verdict": "inconclusive (-2.4%, +13.5% pairs)"},
+      "185_N2_N3_pf_on": {"N2": 1209.21, "N3": 1188.28, "note": "vs fused 1344-1477 same window: apparent -14%, window-confounded with nopf-window runs at parity"}
+    },
+    "conclusion": "cache-fit regime has B/b~0 -> nothing to prefetch; cache-exceed regime thrashes L3; thrash-free NT streaming not reliably available on this AMD box; default OFF, pf flag kept for reproduction"
+  },
+  "barrier_audit": {
+    "barriers_per_token": 0,
+    "structural": true,
+    "evidence": [
+      "rings: 2 cursor loads + 2 stores per transfer (relaxed/acquire/release)",
+      "zero atomic_fetch_* RMW, zero CAS",
+      "zero mutex/condvar/event/critical-section",
+      "WaitForSingleObject only joins threads at shutdown (stop_groups)",
+      "Sleep(20) only in main thread duration timer"
+    ]
+  },
+  "topology": {
+    "query": "GetLogicalProcessorInformation at setup (RelationProcessorCore + RelationCache L3, size captured)",
+    "order": "physical cores first, then SMT siblings, all inside L3 mask",
+    "cross_ccx": "hard error",
+    "observed": [0, 2, 4, 6, 1, 3, 5, 7],
+    "override": "cores=a,b,c CSV",
+    "home_touch": "do_touch per group before start_groups"
+  },
+  "partitions": {
+    "model_185_N4_cost_mac": [415728, 568080, 568080, 589968],
+    "model_185_N4_max_over_avg": 1.10,
+    "model_185_units": 8,
+    "model_126_units": 14
+  },
+  "findings": [
+    "box non-stationarity: fused-185 1184-1533 tok/s within minutes (bracketed monitors everywhere; source undiagnosed, no throttle seen)",
+    "fat tails: p99 5.6ms, max 100-718ms at N>=4: OS deschedules spinner threads; threads kept at normal priority to never starve other jobs on this shared box",
+    "width-8 SMT knee replicated (plan 2.7): N=8 pf-off ~= N=4 (957-1012), -34% vs fused",
+    "prefetch-on-idle negative result (see prefetch_on_idle_experiment)",
+    "126 N=2 < N=1: handoff + turbo dilution > 0.4ms bandwidth gain"
+  ]
+}

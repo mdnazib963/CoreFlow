@@ -1,0 +1,89 @@
+{
+  "phase": 5,
+  "date": "2026-10-09",
+  "protocol": "6 interleaved reps x 8s, K=1, median of 6 (rounds interleaved across N); sustained = two independent 60s runs N=4",
+  "reps_tok_s": {
+    "N1": [
+      3294.48,
+      3274.19,
+      3592.59,
+      3625.58,
+      3645.48,
+      3683.55
+    ],
+    "N2": [
+      2519.23,
+      3538.3,
+      3532.75,
+      3580.72,
+      3583.21,
+      3642.4
+    ],
+    "N4": [
+      2241.79,
+      2201.03,
+      3316.68,
+      3353.59,
+      2986.38,
+      3388.76
+    ],
+    "N8": [
+      939.44,
+      916.74,
+      2561.2,
+      2109.53,
+      2513.9,
+      2521.15
+    ]
+  },
+  "medians_tok_s": {
+    "N1": 3609.09,
+    "N2": 3559.51,
+    "N4": 3151.53,
+    "N8": 2311.72
+  },
+  "baseline_p4_tok_s": {
+    "N1": 1494.55,
+    "N2": 1472.0,
+    "N4": 1415.05,
+    "N8": 1078.09
+  },
+  "speedup_vs_p4": {
+    "N1": 2.415,
+    "N2": 2.418,
+    "N4": 2.227,
+    "N8": 2.144
+  },
+  "sustained_60s_N4": [
+    {
+      "run": 1,
+      "tok_s": 2830.55,
+      "tokens": 169858,
+      "p50_ms": 0.292,
+      "p99_ms": 0.757,
+      "max_ms": 695.723,
+      "prefill_tok": 11505,
+      "speedup_vs_p4": 1.988,
+      "note": "included a 695ms OS outlier"
+    },
+    {
+      "run": 2,
+      "tok_s": 3294.33,
+      "tokens": 197716,
+      "p50_ms": 0.273,
+      "p99_ms": 0.628,
+      "max_ms": 203.646,
+      "prefill_tok": 13390,
+      "speedup_vs_p4": 2.314
+    }
+  ],
+  "p4_sustained_ref": {
+    "tok_s": 1423.8,
+    "p99_ms": 1.29,
+    "floor_x": 28.5
+  },
+  "files": {
+    "raw_note": "rep values embedded above",
+    "report": "phase0/phase5_results.json"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "prompts": 6,
+  "skipped": 0,
+  "first_tok_acc": 1.0,
+  "greedy_exact_acc": 1.0,
+  "torch_parity_exact": 1.0,
+  "torch_token_match": 1.0,
+  "records_out": 6
+}

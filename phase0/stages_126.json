@@ -1,0 +1,2735 @@
+{
+ "ir_version": 1,
+ "model": "model_126.i8",
+ "model_bytes": 12773890,
+ "arch": {
+  "vocab": 4096,
+  "d": 384,
+  "dff": 512,
+  "nconv": 8,
+  "natt": 4,
+  "heads": 6,
+  "kv_heads": 2,
+  "ctx": 1024,
+  "nblocks": 12,
+  "k": 4,
+  "softcap": 30.0
+ },
+ "max_d": 384,
+ "chain": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13
+ ],
+ "units": [
+  {
+   "unit_id": 0,
+   "role": "embed",
+   "block": null,
+   "kind": "embed",
+   "blocks": [],
+   "embed": true,
+   "head": false,
+   "sections": [],
+   "reads": [
+    {
+     "tag": "WTE",
+     "kind": "i8",
+     "rows": 4096,
+     "cols": 384,
+     "bytes": 1589248,
+     "ranges": [
+      {
+       "off": 3074,
+       "len": 1572864
+      },
+      {
+       "off": 1575938,
+       "len": 16384
+      }
+     ]
+    }
+   ],
+   "cost_mac": 384,
+   "bytes": 0
+  },
+  {
+   "unit_id": 1,
+   "role": "block",
+   "block": 0,
+   "kind": "conv",
+   "blocks": [
+    0
+   ],
+   "embed": false,
+   "head": false,
+   "sections": [
+    {
+     "tag": "N1",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 1592322,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "N2",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 1593858,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "DW",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1920,
+     "ranges": [
+      {
+       "off": 1595394,
+       "len": 384
+      },
+      {
+       "off": 1596930,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "GATE",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 1598466,
+       "len": 147456
+      },
+      {
+       "off": 1745922,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "MIX",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 1747458,
+       "len": 147456
+      },
+      {
+       "off": 1894914,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "F1",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 1896450,
+       "len": 196608
+      },
+      {
+       "off": 2093058,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F2",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 2095106,
+       "len": 196608
+      },
+      {
+       "off": 2291714,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F3",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 512,
+     "bytes": 198144,
+     "ranges": [
+      {
+       "off": 2293762,
+       "len": 196608
+      },
+      {
+       "off": 2490370,
+       "len": 1536
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 885888,
+   "bytes": 898432
+  },
+  {
+   "unit_id": 2,
+   "role": "block",
+   "block": 1,
+   "kind": "conv",
+   "blocks": [
+    1
+   ],
+   "embed": false,
+   "head": false,
+   "sections": [
+    {
+     "tag": "N1",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 2491906,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "N2",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 2493442,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "DW",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1920,
+     "ranges": [
+      {
+       "off": 2494978,
+       "len": 384
+      },
+      {
+       "off": 2496514,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "GATE",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 2498050,
+       "len": 147456
+      },
+      {
+       "off": 2645506,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "MIX",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 2647042,
+       "len": 147456
+      },
+      {
+       "off": 2794498,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "F1",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 2796034,
+       "len": 196608
+      },
+      {
+       "off": 2992642,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F2",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 2994690,
+       "len": 196608
+      },
+      {
+       "off": 3191298,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F3",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 512,
+     "bytes": 198144,
+     "ranges": [
+      {
+       "off": 3193346,
+       "len": 196608
+      },
+      {
+       "off": 3389954,
+       "len": 1536
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 885888,
+   "bytes": 898432
+  },
+  {
+   "unit_id": 3,
+   "role": "block",
+   "block": 2,
+   "kind": "attn",
+   "blocks": [
+    2
+   ],
+   "embed": false,
+   "head": false,
+   "sections": [
+    {
+     "tag": "N1",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 3391490,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "N2",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 3393026,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "QKV",
+     "kind": "i8",
+     "rows": 640,
+     "cols": 384,
+     "bytes": 248320,
+     "ranges": [
+      {
+       "off": 3394562,
+       "len": 245760
+      },
+      {
+       "off": 3640322,
+       "len": 2560
+      }
+     ]
+    },
+    {
+     "tag": "OUT",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 3642882,
+       "len": 147456
+      },
+      {
+       "off": 3790338,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "F1",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 3791874,
+       "len": 196608
+      },
+      {
+       "off": 3988482,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F2",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 3990530,
+       "len": 196608
+      },
+      {
+       "off": 4187138,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F3",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 512,
+     "bytes": 198144,
+     "ranges": [
+      {
+       "off": 4189186,
+       "len": 196608
+      },
+      {
+       "off": 4385794,
+       "len": 1536
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 1377024,
+   "bytes": 995840
+  },
+  {
+   "unit_id": 4,
+   "role": "block",
+   "block": 3,
+   "kind": "conv",
+   "blocks": [
+    3
+   ],
+   "embed": false,
+   "head": false,
+   "sections": [
+    {
+     "tag": "N1",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 4387330,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "N2",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 4388866,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "DW",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1920,
+     "ranges": [
+      {
+       "off": 4390402,
+       "len": 384
+      },
+      {
+       "off": 4391938,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "GATE",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 4393474,
+       "len": 147456
+      },
+      {
+       "off": 4540930,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "MIX",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 4542466,
+       "len": 147456
+      },
+      {
+       "off": 4689922,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "F1",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 4691458,
+       "len": 196608
+      },
+      {
+       "off": 4888066,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F2",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 4890114,
+       "len": 196608
+      },
+      {
+       "off": 5086722,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F3",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 512,
+     "bytes": 198144,
+     "ranges": [
+      {
+       "off": 5088770,
+       "len": 196608
+      },
+      {
+       "off": 5285378,
+       "len": 1536
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 885888,
+   "bytes": 898432
+  },
+  {
+   "unit_id": 5,
+   "role": "block",
+   "block": 4,
+   "kind": "conv",
+   "blocks": [
+    4
+   ],
+   "embed": false,
+   "head": false,
+   "sections": [
+    {
+     "tag": "N1",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 5286914,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "N2",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 5288450,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "DW",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1920,
+     "ranges": [
+      {
+       "off": 5289986,
+       "len": 384
+      },
+      {
+       "off": 5291522,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "GATE",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 5293058,
+       "len": 147456
+      },
+      {
+       "off": 5440514,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "MIX",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 5442050,
+       "len": 147456
+      },
+      {
+       "off": 5589506,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "F1",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 5591042,
+       "len": 196608
+      },
+      {
+       "off": 5787650,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F2",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 5789698,
+       "len": 196608
+      },
+      {
+       "off": 5986306,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F3",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 512,
+     "bytes": 198144,
+     "ranges": [
+      {
+       "off": 5988354,
+       "len": 196608
+      },
+      {
+       "off": 6184962,
+       "len": 1536
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 885888,
+   "bytes": 898432
+  },
+  {
+   "unit_id": 6,
+   "role": "block",
+   "block": 5,
+   "kind": "attn",
+   "blocks": [
+    5
+   ],
+   "embed": false,
+   "head": false,
+   "sections": [
+    {
+     "tag": "N1",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 6186498,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "N2",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 6188034,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "QKV",
+     "kind": "i8",
+     "rows": 640,
+     "cols": 384,
+     "bytes": 248320,
+     "ranges": [
+      {
+       "off": 6189570,
+       "len": 245760
+      },
+      {
+       "off": 6435330,
+       "len": 2560
+      }
+     ]
+    },
+    {
+     "tag": "OUT",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 6437890,
+       "len": 147456
+      },
+      {
+       "off": 6585346,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "F1",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 6586882,
+       "len": 196608
+      },
+      {
+       "off": 6783490,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F2",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 6785538,
+       "len": 196608
+      },
+      {
+       "off": 6982146,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F3",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 512,
+     "bytes": 198144,
+     "ranges": [
+      {
+       "off": 6984194,
+       "len": 196608
+      },
+      {
+       "off": 7180802,
+       "len": 1536
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 1377024,
+   "bytes": 995840
+  },
+  {
+   "unit_id": 7,
+   "role": "block",
+   "block": 6,
+   "kind": "conv",
+   "blocks": [
+    6
+   ],
+   "embed": false,
+   "head": false,
+   "sections": [
+    {
+     "tag": "N1",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 7182338,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "N2",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 7183874,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "DW",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1920,
+     "ranges": [
+      {
+       "off": 7185410,
+       "len": 384
+      },
+      {
+       "off": 7186946,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "GATE",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 7188482,
+       "len": 147456
+      },
+      {
+       "off": 7335938,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "MIX",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 7337474,
+       "len": 147456
+      },
+      {
+       "off": 7484930,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "F1",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 7486466,
+       "len": 196608
+      },
+      {
+       "off": 7683074,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F2",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 7685122,
+       "len": 196608
+      },
+      {
+       "off": 7881730,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F3",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 512,
+     "bytes": 198144,
+     "ranges": [
+      {
+       "off": 7883778,
+       "len": 196608
+      },
+      {
+       "off": 8080386,
+       "len": 1536
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 885888,
+   "bytes": 898432
+  },
+  {
+   "unit_id": 8,
+   "role": "block",
+   "block": 7,
+   "kind": "conv",
+   "blocks": [
+    7
+   ],
+   "embed": false,
+   "head": false,
+   "sections": [
+    {
+     "tag": "N1",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 8081922,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "N2",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 8083458,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "DW",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1920,
+     "ranges": [
+      {
+       "off": 8084994,
+       "len": 384
+      },
+      {
+       "off": 8086530,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "GATE",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 8088066,
+       "len": 147456
+      },
+      {
+       "off": 8235522,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "MIX",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 8237058,
+       "len": 147456
+      },
+      {
+       "off": 8384514,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "F1",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 8386050,
+       "len": 196608
+      },
+      {
+       "off": 8582658,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F2",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 8584706,
+       "len": 196608
+      },
+      {
+       "off": 8781314,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F3",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 512,
+     "bytes": 198144,
+     "ranges": [
+      {
+       "off": 8783362,
+       "len": 196608
+      },
+      {
+       "off": 8979970,
+       "len": 1536
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 885888,
+   "bytes": 898432
+  },
+  {
+   "unit_id": 9,
+   "role": "block",
+   "block": 8,
+   "kind": "attn",
+   "blocks": [
+    8
+   ],
+   "embed": false,
+   "head": false,
+   "sections": [
+    {
+     "tag": "N1",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 8981506,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "N2",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 8983042,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "QKV",
+     "kind": "i8",
+     "rows": 640,
+     "cols": 384,
+     "bytes": 248320,
+     "ranges": [
+      {
+       "off": 8984578,
+       "len": 245760
+      },
+      {
+       "off": 9230338,
+       "len": 2560
+      }
+     ]
+    },
+    {
+     "tag": "OUT",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 9232898,
+       "len": 147456
+      },
+      {
+       "off": 9380354,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "F1",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 9381890,
+       "len": 196608
+      },
+      {
+       "off": 9578498,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F2",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 9580546,
+       "len": 196608
+      },
+      {
+       "off": 9777154,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F3",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 512,
+     "bytes": 198144,
+     "ranges": [
+      {
+       "off": 9779202,
+       "len": 196608
+      },
+      {
+       "off": 9975810,
+       "len": 1536
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 1377024,
+   "bytes": 995840
+  },
+  {
+   "unit_id": 10,
+   "role": "block",
+   "block": 9,
+   "kind": "conv",
+   "blocks": [
+    9
+   ],
+   "embed": false,
+   "head": false,
+   "sections": [
+    {
+     "tag": "N1",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 9977346,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "N2",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 9978882,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "DW",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1920,
+     "ranges": [
+      {
+       "off": 9980418,
+       "len": 384
+      },
+      {
+       "off": 9981954,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "GATE",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 9983490,
+       "len": 147456
+      },
+      {
+       "off": 10130946,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "MIX",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 10132482,
+       "len": 147456
+      },
+      {
+       "off": 10279938,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "F1",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 10281474,
+       "len": 196608
+      },
+      {
+       "off": 10478082,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F2",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 10480130,
+       "len": 196608
+      },
+      {
+       "off": 10676738,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F3",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 512,
+     "bytes": 198144,
+     "ranges": [
+      {
+       "off": 10678786,
+       "len": 196608
+      },
+      {
+       "off": 10875394,
+       "len": 1536
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 885888,
+   "bytes": 898432
+  },
+  {
+   "unit_id": 11,
+   "role": "block",
+   "block": 10,
+   "kind": "conv",
+   "blocks": [
+    10
+   ],
+   "embed": false,
+   "head": false,
+   "sections": [
+    {
+     "tag": "N1",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 10876930,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "N2",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 10878466,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "DW",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1920,
+     "ranges": [
+      {
+       "off": 10880002,
+       "len": 384
+      },
+      {
+       "off": 10881538,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "GATE",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 10883074,
+       "len": 147456
+      },
+      {
+       "off": 11030530,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "MIX",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 11032066,
+       "len": 147456
+      },
+      {
+       "off": 11179522,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "F1",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 11181058,
+       "len": 196608
+      },
+      {
+       "off": 11377666,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F2",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 11379714,
+       "len": 196608
+      },
+      {
+       "off": 11576322,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F3",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 512,
+     "bytes": 198144,
+     "ranges": [
+      {
+       "off": 11578370,
+       "len": 196608
+      },
+      {
+       "off": 11774978,
+       "len": 1536
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 885888,
+   "bytes": 898432
+  },
+  {
+   "unit_id": 12,
+   "role": "block",
+   "block": 11,
+   "kind": "attn",
+   "blocks": [
+    11
+   ],
+   "embed": false,
+   "head": false,
+   "sections": [
+    {
+     "tag": "N1",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 11776514,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "N2",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 11778050,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "QKV",
+     "kind": "i8",
+     "rows": 640,
+     "cols": 384,
+     "bytes": 248320,
+     "ranges": [
+      {
+       "off": 11779586,
+       "len": 245760
+      },
+      {
+       "off": 12025346,
+       "len": 2560
+      }
+     ]
+    },
+    {
+     "tag": "OUT",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 384,
+     "bytes": 148992,
+     "ranges": [
+      {
+       "off": 12027906,
+       "len": 147456
+      },
+      {
+       "off": 12175362,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "F1",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 12176898,
+       "len": 196608
+      },
+      {
+       "off": 12373506,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F2",
+     "kind": "i8",
+     "rows": 512,
+     "cols": 384,
+     "bytes": 198656,
+     "ranges": [
+      {
+       "off": 12375554,
+       "len": 196608
+      },
+      {
+       "off": 12572162,
+       "len": 2048
+      }
+     ]
+    },
+    {
+     "tag": "F3",
+     "kind": "i8",
+     "rows": 384,
+     "cols": 512,
+     "bytes": 198144,
+     "ranges": [
+      {
+       "off": 12574210,
+       "len": 196608
+      },
+      {
+       "off": 12770818,
+       "len": 1536
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 1377024,
+   "bytes": 995840
+  },
+  {
+   "unit_id": 13,
+   "role": "head",
+   "block": null,
+   "kind": "head",
+   "blocks": [],
+   "embed": false,
+   "head": true,
+   "sections": [
+    {
+     "tag": "NF",
+     "kind": "f32",
+     "rows": 384,
+     "cols": 1,
+     "bytes": 1536,
+     "ranges": [
+      {
+       "off": 12772354,
+       "len": 1536
+      }
+     ]
+    },
+    {
+     "tag": "WTE",
+     "kind": "i8",
+     "rows": 4096,
+     "cols": 384,
+     "bytes": 1589248,
+     "ranges": [
+      {
+       "off": 3074,
+       "len": 1572864
+      },
+      {
+       "off": 1575938,
+       "len": 16384
+      }
+     ]
+    }
+   ],
+   "reads": [],
+   "cost_mac": 1573248,
+   "bytes": 1590784
+  }
+ ],
+ "partitions": {
+  "1": [
+   {
+    "lo": 0,
+    "hi": 13,
+    "units": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13
+    ],
+    "cost_mac": 14168832
+   }
+  ],
+  "2": [
+   {
+    "lo": 0,
+    "hi": 7,
+    "units": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "cost_mac": 7183872
+   },
+   {
+    "lo": 8,
+    "hi": 13,
+    "units": [
+     8,
+     9,
+     10,
+     11,
+     12,
+     13
+    ],
+    "cost_mac": 6984960
+   }
+  ],
+  "3": [
+   {
+    "lo": 0,
+    "hi": 5,
+    "units": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "cost_mac": 4920960
+   },
+   {
+    "lo": 6,
+    "hi": 9,
+    "units": [
+     6,
+     7,
+     8,
+     9
+    ],
+    "cost_mac": 4525824
+   },
+   {
+    "lo": 10,
+    "hi": 13,
+    "units": [
+     10,
+     11,
+     12,
+     13
+    ],
+    "cost_mac": 4722048
+   }
+  ],
+  "4": [
+   {
+    "lo": 0,
+    "hi": 3,
+    "units": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "cost_mac": 3149184
+   },
+   {
+    "lo": 4,
+    "hi": 6,
+    "units": [
+     4,
+     5,
+     6
+    ],
+    "cost_mac": 3148800
+   },
+   {
+    "lo": 7,
+    "hi": 10,
+    "units": [
+     7,
+     8,
+     9,
+     10
+    ],
+    "cost_mac": 4034688
+   },
+   {
+    "lo": 11,
+    "hi": 13,
+    "units": [
+     11,
+     12,
+     13
+    ],
+    "cost_mac": 3836160
+   }
+  ],
+  "5": [
+   {
+    "lo": 0,
+    "hi": 2,
+    "units": [
+     0,
+     1,
+     2
+    ],
+    "cost_mac": 1772160
+   },
+   {
+    "lo": 3,
+    "hi": 5,
+    "units": [
+     3,
+     4,
+     5
+    ],
+    "cost_mac": 3148800
+   },
+   {
+    "lo": 6,
+    "hi": 8,
+    "units": [
+     6,
+     7,
+     8
+    ],
+    "cost_mac": 3148800
+   },
+   {
+    "lo": 9,
+    "hi": 11,
+    "units": [
+     9,
+     10,
+     11
+    ],
+    "cost_mac": 3148800
+   },
+   {
+    "lo": 12,
+    "hi": 13,
+    "units": [
+     12,
+     13
+    ],
+    "cost_mac": 2950272
+   }
+  ],
+  "6": [
+   {
+    "lo": 0,
+    "hi": 2,
+    "units": [
+     0,
+     1,
+     2
+    ],
+    "cost_mac": 1772160
+   },
+   {
+    "lo": 3,
+    "hi": 4,
+    "units": [
+     3,
+     4
+    ],
+    "cost_mac": 2262912
+   },
+   {
+    "lo": 5,
+    "hi": 6,
+    "units": [
+     5,
+     6
+    ],
+    "cost_mac": 2262912
+   },
+   {
+    "lo": 7,
+    "hi": 8,
+    "units": [
+     7,
+     8
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 9,
+    "hi": 11,
+    "units": [
+     9,
+     10,
+     11
+    ],
+    "cost_mac": 3148800
+   },
+   {
+    "lo": 12,
+    "hi": 13,
+    "units": [
+     12,
+     13
+    ],
+    "cost_mac": 2950272
+   }
+  ],
+  "7": [
+   {
+    "lo": 0,
+    "hi": 2,
+    "units": [
+     0,
+     1,
+     2
+    ],
+    "cost_mac": 1772160
+   },
+   {
+    "lo": 3,
+    "hi": 4,
+    "units": [
+     3,
+     4
+    ],
+    "cost_mac": 2262912
+   },
+   {
+    "lo": 5,
+    "hi": 6,
+    "units": [
+     5,
+     6
+    ],
+    "cost_mac": 2262912
+   },
+   {
+    "lo": 7,
+    "hi": 8,
+    "units": [
+     7,
+     8
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 9,
+    "hi": 10,
+    "units": [
+     9,
+     10
+    ],
+    "cost_mac": 2262912
+   },
+   {
+    "lo": 11,
+    "hi": 12,
+    "units": [
+     11,
+     12
+    ],
+    "cost_mac": 2262912
+   },
+   {
+    "lo": 13,
+    "hi": 13,
+    "units": [
+     13
+    ],
+    "cost_mac": 1573248
+   }
+  ],
+  "8": [
+   {
+    "lo": 0,
+    "hi": 2,
+    "units": [
+     0,
+     1,
+     2
+    ],
+    "cost_mac": 1772160
+   },
+   {
+    "lo": 3,
+    "hi": 3,
+    "units": [
+     3
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 4,
+    "hi": 5,
+    "units": [
+     4,
+     5
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 6,
+    "hi": 6,
+    "units": [
+     6
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 7,
+    "hi": 8,
+    "units": [
+     7,
+     8
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 9,
+    "hi": 10,
+    "units": [
+     9,
+     10
+    ],
+    "cost_mac": 2262912
+   },
+   {
+    "lo": 11,
+    "hi": 12,
+    "units": [
+     11,
+     12
+    ],
+    "cost_mac": 2262912
+   },
+   {
+    "lo": 13,
+    "hi": 13,
+    "units": [
+     13
+    ],
+    "cost_mac": 1573248
+   }
+  ],
+  "9": [
+   {
+    "lo": 0,
+    "hi": 2,
+    "units": [
+     0,
+     1,
+     2
+    ],
+    "cost_mac": 1772160
+   },
+   {
+    "lo": 3,
+    "hi": 3,
+    "units": [
+     3
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 4,
+    "hi": 5,
+    "units": [
+     4,
+     5
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 6,
+    "hi": 6,
+    "units": [
+     6
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 7,
+    "hi": 8,
+    "units": [
+     7,
+     8
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 9,
+    "hi": 9,
+    "units": [
+     9
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 10,
+    "hi": 11,
+    "units": [
+     10,
+     11
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 12,
+    "hi": 12,
+    "units": [
+     12
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 13,
+    "hi": 13,
+    "units": [
+     13
+    ],
+    "cost_mac": 1573248
+   }
+  ],
+  "10": [
+   {
+    "lo": 0,
+    "hi": 1,
+    "units": [
+     0,
+     1
+    ],
+    "cost_mac": 886272
+   },
+   {
+    "lo": 2,
+    "hi": 2,
+    "units": [
+     2
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 3,
+    "hi": 3,
+    "units": [
+     3
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 4,
+    "hi": 5,
+    "units": [
+     4,
+     5
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 6,
+    "hi": 6,
+    "units": [
+     6
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 7,
+    "hi": 8,
+    "units": [
+     7,
+     8
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 9,
+    "hi": 9,
+    "units": [
+     9
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 10,
+    "hi": 11,
+    "units": [
+     10,
+     11
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 12,
+    "hi": 12,
+    "units": [
+     12
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 13,
+    "hi": 13,
+    "units": [
+     13
+    ],
+    "cost_mac": 1573248
+   }
+  ],
+  "11": [
+   {
+    "lo": 0,
+    "hi": 1,
+    "units": [
+     0,
+     1
+    ],
+    "cost_mac": 886272
+   },
+   {
+    "lo": 2,
+    "hi": 2,
+    "units": [
+     2
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 3,
+    "hi": 3,
+    "units": [
+     3
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 4,
+    "hi": 4,
+    "units": [
+     4
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 5,
+    "hi": 5,
+    "units": [
+     5
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 6,
+    "hi": 6,
+    "units": [
+     6
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 7,
+    "hi": 8,
+    "units": [
+     7,
+     8
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 9,
+    "hi": 9,
+    "units": [
+     9
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 10,
+    "hi": 11,
+    "units": [
+     10,
+     11
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 12,
+    "hi": 12,
+    "units": [
+     12
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 13,
+    "hi": 13,
+    "units": [
+     13
+    ],
+    "cost_mac": 1573248
+   }
+  ],
+  "12": [
+   {
+    "lo": 0,
+    "hi": 1,
+    "units": [
+     0,
+     1
+    ],
+    "cost_mac": 886272
+   },
+   {
+    "lo": 2,
+    "hi": 2,
+    "units": [
+     2
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 3,
+    "hi": 3,
+    "units": [
+     3
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 4,
+    "hi": 4,
+    "units": [
+     4
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 5,
+    "hi": 5,
+    "units": [
+     5
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 6,
+    "hi": 6,
+    "units": [
+     6
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 7,
+    "hi": 7,
+    "units": [
+     7
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 8,
+    "hi": 8,
+    "units": [
+     8
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 9,
+    "hi": 9,
+    "units": [
+     9
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 10,
+    "hi": 11,
+    "units": [
+     10,
+     11
+    ],
+    "cost_mac": 1771776
+   },
+   {
+    "lo": 12,
+    "hi": 12,
+    "units": [
+     12
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 13,
+    "hi": 13,
+    "units": [
+     13
+    ],
+    "cost_mac": 1573248
+   }
+  ],
+  "13": [
+   {
+    "lo": 0,
+    "hi": 1,
+    "units": [
+     0,
+     1
+    ],
+    "cost_mac": 886272
+   },
+   {
+    "lo": 2,
+    "hi": 2,
+    "units": [
+     2
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 3,
+    "hi": 3,
+    "units": [
+     3
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 4,
+    "hi": 4,
+    "units": [
+     4
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 5,
+    "hi": 5,
+    "units": [
+     5
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 6,
+    "hi": 6,
+    "units": [
+     6
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 7,
+    "hi": 7,
+    "units": [
+     7
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 8,
+    "hi": 8,
+    "units": [
+     8
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 9,
+    "hi": 9,
+    "units": [
+     9
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 10,
+    "hi": 10,
+    "units": [
+     10
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 11,
+    "hi": 11,
+    "units": [
+     11
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 12,
+    "hi": 12,
+    "units": [
+     12
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 13,
+    "hi": 13,
+    "units": [
+     13
+    ],
+    "cost_mac": 1573248
+   }
+  ],
+  "14": [
+   {
+    "lo": 0,
+    "hi": 0,
+    "units": [
+     0
+    ],
+    "cost_mac": 384
+   },
+   {
+    "lo": 1,
+    "hi": 1,
+    "units": [
+     1
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 2,
+    "hi": 2,
+    "units": [
+     2
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 3,
+    "hi": 3,
+    "units": [
+     3
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 4,
+    "hi": 4,
+    "units": [
+     4
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 5,
+    "hi": 5,
+    "units": [
+     5
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 6,
+    "hi": 6,
+    "units": [
+     6
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 7,
+    "hi": 7,
+    "units": [
+     7
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 8,
+    "hi": 8,
+    "units": [
+     8
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 9,
+    "hi": 9,
+    "units": [
+     9
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 10,
+    "hi": 10,
+    "units": [
+     10
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 11,
+    "hi": 11,
+    "units": [
+     11
+    ],
+    "cost_mac": 885888
+   },
+   {
+    "lo": 12,
+    "hi": 12,
+    "units": [
+     12
+    ],
+    "cost_mac": 1377024
+   },
+   {
+    "lo": 13,
+    "hi": 13,
+    "units": [
+     13
+    ],
+    "cost_mac": 1573248
+   }
+  ]
+ },
+ "edges": "chain",
+ "note": "weights own one home: sections touched only by owning stage core; embed reads wte (home=unit7 head). costs are estimated MACs (attn kv term assumes ctx/2)."
+}

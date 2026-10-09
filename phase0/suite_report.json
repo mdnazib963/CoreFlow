@@ -1,0 +1,9 @@
+{
+  "prompts": 3000,
+  "skipped": 0,
+  "first_tok_acc": 0.987,
+  "greedy_exact_acc": 0.733,
+  "torch_parity_exact": 0.9767,
+  "torch_token_match": 0.9941,
+  "records_out": 3000
+}

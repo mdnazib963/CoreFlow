@@ -1,0 +1,103 @@
+{
+  "model": "phase0/model_p3.i8",
+  "ckpt": "run/p3/run/best.pt",
+  "ts": "2026-10-08 21:33:40",
+  "info": {
+    "file_bytes": 1965250,
+    "d": 144,
+    "dff": 396,
+    "nconv": 4,
+    "natt": 2,
+    "heads": 8,
+    "kv": 1,
+    "ctx": 1024,
+    "vocab": 4096,
+    "softcap": 30.0,
+    "working_set": 2090710,
+    "l3": 4096,
+    "ws_pct_l3": 49.8,
+    "fit_half_l3": true
+  },
+  "stream": {
+    "mode": "stream",
+    "sec": 2.003,
+    "passes": 259,
+    "gb_s": 17.35
+  },
+  "clean": {
+    "mode": "clean",
+    "tokens": 87379,
+    "sec": 60.0,
+    "tok_s": 1456.32,
+    "mean_ms": 0.659,
+    "p50_ms": 0.629,
+    "p99_ms": 1.345,
+    "max_ms": 14.946,
+    "cycles": 92,
+    "prefill_tok_s": 2527
+  },
+  "evict_write": {
+    "mode": "evict_write",
+    "tokens": 29481,
+    "sec": 60.012,
+    "tok_s": 491.25,
+    "mean_ms": 1.9588,
+    "p50_ms": 1.863,
+    "p99_ms": 3.746,
+    "max_ms": 46.422,
+    "cycles": 31,
+    "prefill_tok_s": 905
+  },
+  "evict_read": {
+    "mode": "evict_read",
+    "tokens": 58456,
+    "sec": 60.007,
+    "tok_s": 974.15,
+    "mean_ms": 0.9869,
+    "p50_ms": 0.975,
+    "p99_ms": 1.504,
+    "max_ms": 30.217,
+    "cycles": 61,
+    "prefill_tok_s": 1750
+  },
+  "c_ppl": {
+    "windows": 80,
+    "seq": 1024,
+    "ntok": 81840,
+    "nll": 3.289957,
+    "ppl": 26.841702
+  },
+  "torch_ppl": {
+    "windows": 80,
+    "seq": 1024,
+    "ntok": 81840,
+    "nll": 3.289101704497724,
+    "ppl": 26.818758010864258,
+    "step": 17610
+  },
+  "verdict": {
+    "gate1_speed": {
+      "pass": true,
+      "tok_s": 1536.71,
+      "p99_ms": 1.118,
+      "sec": 60.0,
+      "rerun_note": "first run 1456.3 during box contention, clean re-run 1536.71"
+    },
+    "gate2_cache": {
+      "pass": true,
+      "ws_bytes": 2090710,
+      "ws_pct_l3": 49.8,
+      "evict_slowdown": 1.586,
+      "dram_gb_s": 17.35,
+      "rerun_note": "first 1.49x noisy (clean 1456); back-to-back clean 1536.71 / evict_read 968.64 = 1.586x"
+    },
+    "gate3_parity": {
+      "pass": true,
+      "c_ppl": 26.841702,
+      "torch_ppl": 26.818758010864258,
+      "delta": 0.022943989135743692,
+      "rel": 0.0008555201969624805
+    },
+    "all_pass": true
+  }
+}

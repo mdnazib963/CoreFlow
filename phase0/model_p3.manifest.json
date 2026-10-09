@@ -1,0 +1,19 @@
+{
+  "vocab": 4096,
+  "d": 144,
+  "dff": 396,
+  "nconv": 4,
+  "natt": 2,
+  "heads": 8,
+  "kv": 1,
+  "ctx": 1024,
+  "softcap": 30.0,
+  "k": 4,
+  "dhead": 1,
+  "dhead_depth": 3,
+  "dhead_ff": 64,
+  "params": 1907568,
+  "bytes": 1965250,
+  "step": 17610,
+  "ckpt": "run\\p3\\run\\best.pt"
+}
