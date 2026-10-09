@@ -27,6 +27,11 @@ data/*
 !data/val.bin
 !data/tokenizer.json
 !data/bpe.py
+!data/clean.py
+!data/generate.py
+!data/pack.py
+!data/pack_meta.json
+!data/raw/
 bench/
 kaggle/
 kaggle_pkg/

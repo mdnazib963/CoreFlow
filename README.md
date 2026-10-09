@@ -113,12 +113,14 @@ Streams and tokens-in-flight are how you beat single-core pipeline serialization
 
 ## Training from scratch
 
-Pure PyTorch, no HF model/transformers dependency — data packing (`data/pack.py`, byte-level BPE in `data/bpe.py`), training (`train.py`), eval (`eval.py`), int8 export (`phase0_export.py`):
+Pure PyTorch, no HF model/transformers dependency — data pipeline (`data/`: Gutenberg texts → `clean.py` → synthetic task streams `generate.py` → BPE `bpe.py` → `pack.py`), training (`train.py`), eval (`eval.py`), int8 export (`phase0_export.py`). Corpus build takes ~80 s; then:
 
 ```bash
+python data/clean.py && python data/generate.py && python data/pack.py   # ~80 s, writes data/train.bin
 python train.py --train data/train.bin --val data/val.bin --out run \
-  --d 144 --dff 396 --nconv 4 --natt 2 --heads 8 --kv 1 --ctx 1024 --qat
+  --d 144 --dff 396 --nconv 4 --natt 2 --heads 8 --kv 1 --ctx 1024 --qat 10000
 python phase0_export.py --ckpt run/best.pt --out phase0/model.i8
+phase0\phase0.exe phase0\model.i8 info
 ```
 
 GPU wrappers for Colab (`run_p0.ps1`, `run_full.ps1`) are included; the exported int8 artifact is what the C runtime loads. Evaluations (`eval.py`, `p4_suite.py`) cover perplexity, greedy parity, and task suites.
@@ -135,7 +137,8 @@ phase0_export.py    checkpoint -> int8 .i8 + manifest
 phase0/             C11 runtime: cf_model.c (kernels), phase0.c (CLI),
                     stage_rt.c (multi-stream runtime), build_*.bat,
                     *_results.json + gates (the actual measurements)
-data/               tokenizer + 240 KB validation slice (demo data)
+data/               corpus pipeline: raw texts, clean/generate/bpe/pack,
+                    tokenizer + 240 KB validation slice
 BRIEF.md            scientific brief: architecture & quantization rationale
 ```
 

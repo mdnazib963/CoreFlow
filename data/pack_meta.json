@@ -1,0 +1,12 @@
+{
+  "train_tokens": 24044650,
+  "val_tokens": 120000,
+  "s1_chunks": 4915,
+  "s2_chunks": 130000,
+  "s3_chunks": 95000,
+  "frac_s1": 1.0,
+  "frac_s2": 1.0,
+  "frac_s3": 1.0,
+  "vocab": 4096,
+  "estimated_train_hours_434_toks": 15.39
+}
